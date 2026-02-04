@@ -11,7 +11,7 @@ body:
         ## 📌 Task Overview
         어떤 서비스를 개발하는지, 그리고 어떤 기능을 담당하는지 간략하게 설명해주세요.
 
-  # - type: checkboxes
+  - type: textarea
     id: checklist
     attributes:
       label: ✅ To-Do List
