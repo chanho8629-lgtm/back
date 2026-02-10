@@ -4,7 +4,7 @@ create table tbl_board_payment
                             id                        bigint unsigned auto_increment primary key,
   board_payment_sales_kwh   bigint          not null,
   board_payment_sales_price bigint          not null,
-  payment_status            enum ('enable', 'disable') default 'enable',
+  payment_status            enum ('active', 'inactive') default 'active',
   created_date              datetime                   default current_timestamp(),
   updated_date              datetime                   default current_timestamp(),
   payment_member_id         bigint unsigned not null,
@@ -12,3 +12,6 @@ create table tbl_board_payment
   payment_board_id          bigint unsigned not null,
   constraint fk_payment_board_id foreign key (payment_board_id) references tbl_board (id)
 );
+
+DROP TABLE tbl_board_payment;
+SET foreign_key_checks = 1;
