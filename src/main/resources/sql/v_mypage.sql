@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW v_member_mypage AS
+CREATE VIEW v_member_mypage AS
 SELECT
     -- 유저 아이디
     m.id AS member_id,
