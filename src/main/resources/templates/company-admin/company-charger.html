@@ -1,258 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>기업 메인 - 충전소 관리 목록</title>
-        <!-- favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="../../static/images/favicon/favicon.ico">
-        <link rel="apple-touch-icon" sizes="57x57" href="../../static/images/favicon/apple-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="../../static/images/favicon/apple-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="../../static/images/favicon/apple-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="../../static/images/favicon/apple-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="../../static/images/favicon/apple-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="../../static/images/favicon/apple-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="../../static/images/favicon/apple-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="../../static/images/favicon/apple-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="../../static/images/favicon/apple-icon-180x180.png">
-        <link rel="icon" type="image/png" sizes="192x192"  href="../../static/images/favicon/android-icon-192x192.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="../../static/images/favicon/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="96x96" href="../../static/images/favicon/favicon-96x96.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="../../static/images/favicon/favicon-16x16.png">
-
-        <!-- 폰트 -->
-        <link rel="stylesheet" href="/static/css/common/font.css" />
-
-        <!-- 스타일 초기화 css -->
-        <link rel="stylesheet" href="/static/css/common/reset.css" />
-
-        <!-- 공통 css -->
-        <link rel="stylesheet" href="/static/css/common/common.css">
-
-        <!-- fontawesome 꾸며진 폰트 -->
-        <link rel="stylesheet" href="/static/css/common/fontawesome.css">
-
-        <!-- 유틸 css -->
-        <link rel="stylesheet" href="/static/css/common/util.css" />
-
-        <!-- 개별 css 스타일 -->
-        <link rel="stylesheet" href="/static/css/company-admin/company-charger.css" />
-
+    <link rel="shortcut icon" href="https://wabiz-static-dev.s3.ap-northeast-2.amazonaws.com/static/favicon/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/common/font.css" />
+    <link rel="stylesheet" href="/css/common/reset.css" />
+    <link rel="stylesheet" href="/css/common/common.css">
+    <link rel="stylesheet" href="/css/common/fontawesome.css">
+    <link rel="stylesheet" href="/css/common/util.css" />
+    <link rel="stylesheet" href="/css/company-admin/company-charger.css" />
 </head>
 <body>
-    <main class="board">
-        <!-- 헤더, 페이지 제목 -->
-        <div class="ui-header">
-            <h2 class="title">충전소 목록</h2>
-        </div>
+<main class="board">
+    <div class="ui-header">
+        <h2 class="title">충전소 관리</h2>
+    </div>
 
-        <!-- 화면 상단, 탭 이동 버튼/공지사항 알림바 -->
-        <div class="segmented-tabs">
-            <!-- 공지사항 알림바 -->
-            <!-- <a href="#!" class="notice-banner">
-                <span class="banner-logo"></span>
-                <strong class="banner-title">메이커 공지사항</strong>
-                <span class="banner-text">메이커 대상 공지 · 이벤트 확인</span>
-            </a> -->
-            <!-- 탭(페이지) 이동 버튼 -->
-            <!-- 필터바 아님, 페이지 이동 필요 -->
-            <ul>
-                <!-- <li class="active">
-                    <a href="#!">충전소 목록</a>
-                </li> -->
-                <li>
-                    <a href="#!">새 충전소 등록</a>
-                </li>
-                <li>
-                    <a href="#!">충전소 수정</a>
-                </li>
-            </ul>
-        </div>
+    <div class="segmented-tabs">
+        <ul>
+            <li class="active"><a href="#!">충전소 목록</a></li>
+            <li><a th:href="@{/ev/evcharger}">새 충전소 등록</a></li>
+            <li><a href="#!">충전소 수정</a></li>
+        </ul>
+    </div>
 
-        <!-- 메인, 글 목록 -->
-        <div class="board-main">
-            <ul>
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <!-- 강조 -->
-                                <em class="notice">신규</em>
-                                <h3 class="title">[관악구] 관악역 공영주차장 / 3대</h3>
-                                <span class="created-at">2026.01.20</span>
-                            </div>
+    <div class="board-main">
+        <ul>
+            <li th:each="charger : ${chargerList}">
+                <a href="#!" class="article no-thumb">
+                    <div class="info-box">
+                        <div class="info-inner">
+                            <!-- 제목 -->
+                            <h3 class="title" th:text="|[${charger.evChargerAddress}] ${charger.evChargerUid} / ${charger.evChargerContent}|">
+                                [주소] UID / 내용
+                            </h3>
+                            <!-- 설치일 -->
+                            <span class="created-at" th:text="${charger.setupDate}">2026-01-01</span>
                         </div>
-                    </a>
-                </li>
-
-                <!--  글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <!-- 강조 -->
-                                <em class="notice">신규</em>
-                                <h3 class="title">[용산구] 한강로 공영 주차장 / 10대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[강남구] 역삼동 제 2 공영주차장 / 4대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[서초구] 서초역 노외주차장 / 4대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[마포구] 합정역 공영주차장 / 8대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[송파구] 잠실종합운동장 주차장 / 12대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[영등포구] 여의도한강공원 주차장 / 5대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[동작구] 사당역 공영주차장 / 7대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[성동구] 왕십리역 환승주차장 / 9대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-
-                <!-- 글 내용 -->
-                <li>
-                    <a href="#!" class="article no-thumb">
-                        <div class="info-box">
-                            <div class="info-inner">
-                                <h3 class="title">[종로구] 광화문 공영주차장 / 2대</h3>
-                                <span class="created-at">2026.01.15</span>
-                            </div>
-                        </div>
-                    </a>
-                </li> 
-            </ul>
-        </div>
-
-        <!-- 푸터, 페이지 이동/제목, 내용 검색 -->
-        <div class="board-footer">
-            <!-- 페이지네이션 -->
-            <div class="pagination">
-                <div class="page">
-                    <div class="desktop-only">
-                        <!-- 왼쪽 이동 버튼 -->
-                        <button class="prev-page icon-chevron-left" data-page="0">
-                            <span class="text-hidden">이전 목록</span>
-                        </button>
-                        <!-- 페이지 리스트 -->
-                        <a href="#!" data-page="1" class="current">1</a>
-                        <a href="#!" data-page="2">2</a>
-                        <a href="#!" data-page="3">3</a>
-                        <a href="#!" data-page="4">4</a>
-                        <a href="#!" data-page="5">5</a>
-                        <a href="#!" data-page="6">6</a>
-                        <!-- 오른쪽 이동 버튼 -->
-                        <button class="next-page icon-chevron-right" data-page="7">
-                            <span class="text-hidden">다음 목록</span>
-                        </button> 
                     </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="board-footer">
+        <div class="pagination">
+            <div class="page">
+                <div class="desktop-only">
+                    <button class="prev-page icon-chevron-left" data-page="0">
+                        <span class="text-hidden">이전 목록</span>
+                    </button>
+                    <a href="#!" data-page="1" class="current">1</a>
+                    <a href="#!" data-page="2">2</a>
+                    <a href="#!" data-page="3">3</a>
+                    <a href="#!" data-page="4">4</a>
+                    <a href="#!" data-page="5">5</a>
+                    <a href="#!" data-page="6">6</a>
+                    <button class="next-page icon-chevron-right" data-page="7">
+                        <span class="text-hidden">다음 목록</span>
+                    </button>
                 </div>
             </div>
-
-            <!-- 검색바 -->
-            <div class="search">
-
-                <!-- 검색 데이터 요청용 폼(서버 구현 시 action/method 설정) -->
-                <form id="news-board-search">
-                    <!-- 검색 필터 -->
-                    <div class="filter-container">
-                        <select id="search-select-in-board" class="filter">
-                            <option value="tc">제목+내용</option>
-                            <option value="t">제목</option>
-                            <option value="c">내용</option>
-                        </select>
-                    </div>
-
-                    <!-- 검색 내용 -->
-                    <div class="field">
-                        <label class="text-hidden">검색창</label>
-                        <input type="text" id="search-text-in-board" class="search-form" name="searchTextInBoard" value="">
-                        <button class="btn-search dense" type="submit">검색</button>
-                        <input id="searchText1" name="searchText1" type="hidden" value="">
-                        <input id="searchSelect1" name="searchSelect1" type="hidden" value="">
-                        <input id="searchSelect2" name="searchSelect2" type="hidden" value="">
-                        <input id="searchSelect4" name="searchSelect4" type="hidden" value="">
-                        <input id="searchSelect5" name="searchSelect5" type="hidden" value="">
-                    </div>
-                </form>
-            </div>
-
         </div>
-    </main>
+
+        <div class="search">
+            <form id="news-board-search">
+                <div class="filter-container">
+                    <select id="search-select-in-board" class="filter">
+                        <option value="tc">전체</option>
+                        <option value="t">제목</option>
+                        <option value="c">내용</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="text-hidden">검색창</label>
+                    <input type="text" id="search-text-in-board" class="search-form" name="searchTextInBoard" value="">
+                    <button class="btn-search dense" type="submit">검색</button>
+                    <input id="searchText1" name="searchText1" type="hidden" value="">
+                    <input id="searchSelect1" name="searchSelect1" type="hidden" value="">
+                    <input id="searchSelect2" name="searchSelect2" type="hidden" value="">
+                    <input id="searchSelect4" name="searchSelect4" type="hidden" value="">
+                    <input id="searchSelect5" name="searchSelect5" type="hidden" value="">
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<script src="/js/company-admin/company-charger.js"></script>
 </body>
-<script src="/static/js/company-admin/company-charger.js"></script>
 </html>

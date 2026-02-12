@@ -32,3 +32,13 @@ emailInput.addEventListener("input", () => {
         nextButton.classList.remove("Button-module_disabled__2ebf2");
     }
 });
+
+const kakaoLoginButton = document.getElementById("kakao-login");
+kakaoLoginButton.addEventListener("click", (e) =>{
+    location.href = "https://kauth.kakao.com/oauth/authorize?client_id=c03e2bc9dd98290165897636f33947f3&redirect_uri=http://localhost:10000/kakao/login&response_type=code";
+});
+
+// 로그인 실패
+if(login) {
+    document.getElementById("login-fail-message").classList.add("on");
+}
