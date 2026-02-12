@@ -1,136 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>기업 - 충전소 등록</title>
-        <!-- favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="../../static/images/favicon/favicon.ico">
-        <link rel="apple-touch-icon" sizes="57x57" href="../../static/images/favicon/apple-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="../../static/images/favicon/apple-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="../../static/images/favicon/apple-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="../../static/images/favicon/apple-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="../../static/images/favicon/apple-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="../../static/images/favicon/apple-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="../../static/images/favicon/apple-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="../../static/images/favicon/apple-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="../../static/images/favicon/apple-icon-180x180.png">
-        <link rel="icon" type="image/png" sizes="192x192"  href="../../static/images/favicon/android-icon-192x192.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="../../static/images/favicon/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="96x96" href="../../static/images/favicon/favicon-96x96.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="../../static/images/favicon/favicon-16x16.png">
 
-        <!-- 폰트 -->
-        <link rel="stylesheet" href="/static/css/common/font.css" />
-
-        <!-- 스타일 초기화 css -->
-        <link rel="stylesheet" href="/static/css/common/reset.css" />
-
-        <!-- 공통 css -->
-        <link rel="stylesheet" href="/static/css/common/common.css">
-
-        <!-- fontawesome 꾸며진 폰트 -->
-        <link rel="stylesheet" href="/static/css/common/fontawesome.css">
-
-        <!-- 유틸 css -->
-        <link rel="stylesheet" href="/static/css/common/util.css" />
-
-        <!-- 유틸 2 -->
-        <link rel="stylesheet" href="/static/css/company-admin/company-utill.css"> 
-
-        <!-- 개별 css 스타일 -->
-        <link rel="stylesheet" href="/static/css/company-admin/company-charger-create.css" />
-
+    <link rel="shortcut icon" href="https://wabiz-static-dev.s3.ap-northeast-2.amazonaws.com/static/favicon/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/reset.css" />
+    <link rel="stylesheet" href="/css/common/common.css">
+    <link rel="stylesheet" href="/css/common/fontawesome.css">
+    <link rel="stylesheet" href="/css/common/util.css" />
+    <link rel="stylesheet" href="/css/company-admin/company-utill.css">
+    <link rel="stylesheet" href="/css/company-admin/company-charger-create.css" />
 </head>
+
 <body>
-    <main role="main">
-        <!-- 컨테이너 -->
-        <div class="container flex-1 quiry-contents-box" id="page-container">
-            <!-- 가로 정렬용 div -->
-            <div class="row align-items-center"></div>
-            
-            <!-- 전체 내용 영역 -->
-            <div class="row">
-                <div class="lg:col-9">
+<main role="main">
+    <div class="container flex-1 quiry-contents-box" id="page-container">
+        <div class="row">
+            <div class="lg:col-9">
 
-                    <!-- 현재 페이지 안내 문구 -->
-                    <nav class="col font-size-md font-medium page-nav-reset">
-                        <ol class="breadcrumbs">
-                            <li title="충전소 관리">
-                                <a href="#!">충전소 관리</a>
-                            </li>
-                            <li title="새 충전소 등록">
-                                새 충전소 등록
-                            </li>
-                        </ol>
-                    </nav>
+                <header class="mb-5 header-style page-title">
+                    <h1>새 충전소 등록</h1>
+                </header>
 
-                    <!-- 헤더: 제목 -->
-                    <header class="mb-5 header-style page-title">
-                        <h1>새 충전소 등록</h1>
-                    </header> 
+                <div class="form height-fixed">
 
-                    <!-- 바디: 작성 내용 -->
-                    <div class="form height-fixed">
+                    <form class="request-form"
+                          id="new-request"
+                          th:action="@{/ev/evcharger}"
+                          method="post">
 
-                        <!-- 등록 정보 작성 폼 -->
-                        <!-- (서버 구현 시 action/method 설정) -->
-                        <form class="request-form" id="new-request">
+                        <!-- CSRF -->
+<!--                        <input type="hidden"-->
+<!--                               th:name="${_csrf.parameterName}"-->
+<!--                               th:value="${_csrf.token}"/>-->
 
-                            <!-- 작성 내용 -->
-                            <div class="form-field string required install-date">
-                                <label for="install-date">설치일자</label>
-                                <input type="text" id="install-date" name="installDate">
-                                <!-- 기본 노출 메세지 -->
-                                <p class="field-hint">설치일자를 입력해주세요.</p>
-                                <!-- 에러 메세지 -->
-                                <p class="field-error" hidden>※필수 입력 항목입니다.</p>
-                            </div>
+                        <div class="form-field string required">
+                            <label>설치일자</label>
+                            <input type="date" name="installDate">
+                        </div>
 
-                            <!-- 작성 내용 -->
-                            <div class="form-field string required station-number">
-                                <label for="station-number">충전소 번호</label>
-                                <input type="text" id="station-number" name="stationNumber">
-                                
-                                <!-- 기본 노출 메세지 -->
-                                <p class="field-hint">충전소 고유 번호를 입력해주세요.</p>
-                                
-                                <!-- 에러 메세지 -->
-                                <p class="field-error" hidden>※필수 입력 항목입니다.</p>
-                            </div>
+                        <div class="form-field string required">
+                            <label>충전소 번호</label>
+                            <input type="text" name="stationNumber">
+                        </div>
 
-                            <!-- 작성 내용 -->
-                            <div class="form-field string required install-address">
-                                <label for="install-address">설치주소</label>
-                                <input type="text" id="install-address" name="installAddress">
-                               
-                                <!-- 기본 노출 메세지 -->
-                                <p class="field-hint">충전소가 설치된 주소를 입력해주세요.</p>
-                               
-                                <!-- 에러 메세지 -->
-                                <p class="field-error" hidden>※필수 입력 항목입니다.</p>
-                            </div>
+                        <div class="form-field string required">
+                            <label>설치주소</label>
+<!--                            <input type="text" name="installAddress">-->
 
-                            <!-- 특이사항 작성 -->
-                            <div class="form-field text required no-required-mark">
-                                <label for="charger-note">특이사항</label>
-                                <textarea name="chargerNote" id="charger-note"></textarea>
-                                <p>* 추가로 확인이 필요하거나, 관리가 필요한 내용이 있을 경우 작성해주세요. </p>
-                            </div>
-                       
-                            <!-- 푸터: 취소/완료 버튼 -->
-                            <footer>
-                                <input class="btn-cancel" type="submit" name="commit" value="취소">
-                                <input class="btn-submit" type="submit" name="commit" value="완료">
-                            </footer>
-                        </form>
+                            <input
+                                    id="addressInput"
+                                    name="installAddress"
+                                    placeholder="새로운 주소를 입력하세요."
+                                    maxlength="40"
+                                    type="text"
 
-                    </div> 
+                                    style ="height: 48px;"
+                                    aria-invalid="false"
+                                    value=""
+                                    onclick="sample4_execDaumPostcode();"
+                                    readonly
+                            >
+
+
+                        </div>
+
+                        <div class="form-field text">
+                            <label>특이사항</label>
+                            <textarea name="chargerNote"></textarea>
+                        </div>
+
+                        <footer>
+                            <input class="btn-cancel"
+                                   type="button"
+                                   value="취소"
+                                   th:onclick="|location.href='@{/ev/evcharger}'|">
+
+                            <input class="btn-submit"
+                                   type="submit"
+                                   value="완료">
+                        </footer>
+                    </form>
+
                 </div>
             </div>
         </div>
-        
-    </main>
+    </div>
+</main>
+
+
+
 </body>
-<script src="/static/js/company-admin/company-charger-create.js"></script>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+<script>
+
+    // const checkbox = document.getElementById("chk");
+    const addressInput = document.getElementById("addressInput");
+
+    const defaultAddress = "서울특별시 용산구 새창로 181";
+
+
+
+    /* 우편번호 주소 찾기 */
+
+    //본 예제에서는 도로명 주소 표기 방식에 대한 법령에 따라, 내려오는 데이터를 조합하여 올바른 주소를 구성하는 방법을 설명합니다.
+    function sample4_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function (data) {
+                const roadAddr = data.roadAddress;
+
+                // 주소 input에 값 넣기
+                const addressInput = document.getElementById("addressInput");
+                addressInput.value = roadAddr;
+            }
+        }).open();
+    }
+
+
+</script>
+
 </html>
