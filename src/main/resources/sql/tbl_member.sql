@@ -16,3 +16,5 @@ CREATE TABLE tbl_member
 
 DROP TABLE tbl_member;
 set foreign_key_checks = 1;
+select * from tbl_member;
+

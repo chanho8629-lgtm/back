@@ -3,11 +3,12 @@ package com.app.ggshop.v1.mapper;
 import com.app.ggshop.v1.domain.MemberVO;
 import com.app.ggshop.v1.domain.OAuthVO;
 import com.app.ggshop.v1.dto.MemberDTO;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Optional;
 
 @Mapper
-public interface memberMapper {
+public interface MemberMapper {
     //    아이디 검사
     public Optional<MemberDTO> selectByMemberEmail(String memberEmail);
     //    회원가입

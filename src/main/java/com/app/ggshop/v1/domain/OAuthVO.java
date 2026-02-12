@@ -2,8 +2,8 @@ package com.app.ggshop.v1.domain;
 
 
 import lombok.*;
+import com.app.ggshop.v1.common.enumeration.Provider;
 
-import java.security.Provider;
 
 @Getter
 @ToString
