@@ -104,3 +104,10 @@
 
 .period-selector { display: flex; background-color: #1a1a1c; border-radius: 12px; padding: 4px; margin-top: 24px; }
 #tossStockChart { touch-action: none !important; }
+
+.txt-left-login {
+    display: flex;
+    justify-content: center;
+    font-size: 11px;
+        text-align: right;
+}
