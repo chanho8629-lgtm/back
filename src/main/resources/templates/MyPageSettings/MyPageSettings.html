@@ -60,23 +60,22 @@
                     <h2 class="settings_title">설정</h2>
                     <div class="setting_content">
                         <div class="settings_menusArea">
-                            <div class="settings_photoArea">
-                                <div class="settings_photowrapper">
-                                    <!-- id="profileImage" 추가됨 -->
-                                    <img id="profileImage" src="/image/User Profile/73583439-man-user-icon-person-profile-avatar-glyph-vector-illustration.jpg"
-                                        alt="profile image" class="settings_photo">
-                                    <div class="profileEdit">
-                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#fff"
-                                            width="16" class="withProps_icon" style="height: 16px; width: 16px;">
-                                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                                d="M17.5 1.15147L1.40002 17.2515V22.6H6.74855L22.8486 6.5L17.5 1.15147ZM2.60002 21.4V17.7485L14.25 6.09853L17.9015 9.75L6.2515 21.4H2.60002ZM18.75 8.90147L21.1515 6.5L17.5 2.84853L15.0986 5.25L18.75 8.90147Z"
-                                                fill="#495057"></path>
-                                        </svg>
+                            <form id="profileForm" enctype="multipart/form-data">
+                                <label class="settings_photoArea" for="profileInput">
+                                    <div class="settings_photowrapper">
+                                        <img id="profileImage" th:src="${profileDTO.fileName == 'profile.jpg' ? '/image/profile/profile.jpg' : '/api/files/display?filePath=' + profileDTO.filePath + '&fileName=' + profileDTO.fileName}" alt="profile image" class="settings_photo">
+                                        <div class="profileEdit">
+                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#fff"
+                                                width="16" class="withProps_icon" style="height: 16px; width: 16px;">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="M17.5 1.15147L1.40002 17.2515V22.6H6.74855L22.8486 6.5L17.5 1.15147ZM2.60002 21.4V17.7485L14.25 6.09853L17.9015 9.75L6.2515 21.4H2.60002ZM18.75 8.90147L21.1515 6.5L17.5 2.84853L15.0986 5.25L18.75 8.90147Z"
+                                                    fill="#495057"></path>
+                                            </svg>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- 숨겨진 파일 입력 추가됨 -->
-                                <input type="file" id="profileInput" accept="image/*" style="display: none;">
-                            </div>
+                                    <input type="file" name="file" id="profileInput" accept="image/*" style="display: none;"><!-- 숨겨진 파일 입력 추가됨 -->
+                                </label>
+                            </form>
                             <div class="menuItem_container">
                                 <dl class="menuItem_left">
                                     <dt class="menuItem_title">닉네임</dt>
@@ -145,7 +144,6 @@
                                     <span class="settingItem_title">차량 설정</span>
                                     <div class="settingItem_edit">
                                         <svg viewBox="0 0 24 24"
-                                            xmlns="http://127.0.0.1:5500/templates/carSettings/carSettings.html"
                                             width="24" class="withProps_icon" style="height: 24px; width: 24px;">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
                                                 d="M7.92428 2.57573L7.07575 3.42426L15.6515 12L7.07575 20.5757L7.92428 21.4243L17.3485 12L7.92428 2.57573Z"
@@ -588,8 +586,13 @@
         </div>
     </div>
 </body>
+<script th:inline="javascript">
+    const loggedInMemberId = [[${profileDTO.memberId}]];
+</script>
 <script src="/js/MypageSettings/MypageSettings.js"></script>
-  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e8abd7f9f7efcae4865ac9b93d267f9a&libraries=services"></script>
+<script src="/js/MypageSettings/service.js"></script>
+<script src="/js/MypageSettings/event.js"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e8abd7f9f7efcae4865ac9b93d267f9a&libraries=services"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <script>

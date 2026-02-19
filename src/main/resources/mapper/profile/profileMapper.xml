@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.ggshop.v1.mapper.profile.ProfileMapper">
+    <insert id="insertMemberFile">
+        insert into tbl_member_file (id, member_id) values (#{id}, #{memberId})
+    </insert>
+    <update id="deleteByProfile">
+        update tbl_file SET file_status = 'inactive', updated_date = NOW() WHERE id IN (SELECT id FROM tbl_member_file WHERE member_id = #{memberId}) AND file_status = 'active'
+    </update>
+    <select id="selectProfileByMemberId" resultType="profileDTO">
+        select f.id,f.file_name,f.file_original_name,f.file_size,f.file_path,f.file_content_type,mf.member_id,f.created_date,f.updated_date
+        FROM tbl_file f
+        JOIN tbl_member_file mf
+        ON f.id = mf.id
+        WHERE mf.member_id = #{memberId}
+        AND f.file_status = 'active'
+        ORDER BY f.id DESC  LIMIT 1
+    </select>
+</mapper>

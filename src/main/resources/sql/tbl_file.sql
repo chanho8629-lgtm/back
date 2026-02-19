@@ -11,6 +11,10 @@ create table tbl_file
     created_date       datetime                    default current_timestamp(),
     updated_date       datetime                    default current_timestamp()
 );
-DROP TABLE tbl_file;
 SET foreign_key_checks = 1;
+
+DELETE FROM tbl_file;
+
+DROP TABLE tbl_file;
+
 select * from tbl_file;

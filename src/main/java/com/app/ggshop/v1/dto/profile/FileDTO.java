@@ -7,7 +7,7 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode(of="id")
 @NoArgsConstructor
-public class FileImageDTO {
+public class FileDTO {
     private Long id;
     private String fileName;
     private String fileOriginalName;
