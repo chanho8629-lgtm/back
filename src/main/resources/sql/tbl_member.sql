@@ -22,4 +22,7 @@ DROP TABLE tbl_member;
 
 select * from tbl_member;
 
+INSERT INTO tbl_member (id, member_email, member_password, member_name)
+VALUES (1, 'test@test.com', '1234', 'CC');
+
 

@@ -28,6 +28,7 @@ public class BoardDTO {
                 .boardStatus(boardStatus)
                 .createdDate(createdDate)
                 .updatedDate(updatedDate)
+                .boardFilter(boardFilter)
                 .build();
     }
 

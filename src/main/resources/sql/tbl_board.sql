@@ -14,3 +14,4 @@ create table tbl_board
 
 DROP TABLE tbl_board;
 SET foreign_key_checks = 1;
+select * from tbl_board;

@@ -1,7 +1,10 @@
 package com.app.ggshop.v1.repository.Board;
 
 
+import com.app.ggshop.v1.common.pagination.Criteria;
+import com.app.ggshop.v1.domain.BoardVO;
 import com.app.ggshop.v1.dto.board.BoardDTO;
+import com.app.ggshop.v1.mapper.board.BoardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -13,34 +16,35 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class BoardDAO {
+    private final BoardMapper boardMapper;
 
-//    //    추가
-//    public void save(BoardDTO boardDTO) {
-//        boardtMapper.insert(boardDTO);
-//    }
-//
-//    //    목록
+    //    추가
+    public void save(BoardDTO boardDTO) {
+        boardMapper.insert(boardDTO);
+    }
+
+    //    목록
 //    public List<BoardDTO> findAll(Criteria criteria, Search search){
-//        return postMapper.selectAll(criteria, search);
+//        return boardMapper.selectAll(criteria, search);
 //    }
-//
-//    //    전체 개수
+
+    //    전체 개수
 //    public int findTotal(Search search){
-//        return postMapper.selectTotal(search);
+//        return boardMapper.selectTotal(search);
 //    }
-//
-//    //    조회
+
+    //    조회
 //    public Optional<BoardDTO> findById(Long id){
-//        return postMapper.selectById(id);
+//        return boardMapper.selectById(id);
 //    }
-//
-//    //    수정
-//    public void setPost(boardVO postVO){
-//        postMapper.update(postVO);
-//    }
-//
-//    //    삭제
-//    public void delete(Long id){
-//        postMapper.delete(id);
-//    }
+
+    //    수정
+    public void setPost(BoardVO boardVO){
+        boardMapper.update(boardVO);
+    }
+
+    //    삭제
+    public void delete(Long id){
+        boardMapper.delete(id);
+    }
 }

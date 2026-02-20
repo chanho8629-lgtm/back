@@ -5,12 +5,15 @@ import com.app.ggshop.v1.common.pagination.Criteria;
 import com.app.ggshop.v1.domain.EvChargerVO;
 import com.app.ggshop.v1.dto.EvChargerDTO;
 import com.app.ggshop.v1.dto.PostWithPagingDTO;
+import com.app.ggshop.v1.service.EvChargerService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -22,6 +25,9 @@ class EvChargerTests {
 
     @Autowired
     private EvChargerMapper evChargerMapper;
+
+    @Autowired
+    private EvChargerService evChargerService;
 
     @Test
     void insertEvChargerTest() {

@@ -78,7 +78,6 @@ public class MemberController {
                 MemberDTO loginMember = memberService.login(dto);
                 session.setAttribute("loginMember", loginMember);
 
-                // [중요 수정] /web/main이 아니라 현재 컨트롤러 주소인 /login/main으로 리다이렉트
                 return "redirect:/login/main";
             } catch (Exception e) {
                 return "redirect:/login/join_update_6?error=wrongPassword&email=" + email;
@@ -94,7 +93,6 @@ public class MemberController {
 
     @GetMapping("/main")
     public String mainPage(HttpSession session) {
-        // 로그인 세션이 없으면 로그인 페이지로 쫓아내기
         if (session.getAttribute("loginMember") == null) {
             return "redirect:/login/join_update_6";
         }
@@ -139,7 +137,7 @@ public class MemberController {
     }
 
 
-    @GetMapping("/go-email-join")
+    @GetMapping("/go_email_join")
     public String goEmailJoin() {
 
         return "redirect:/login/join_update_6";
