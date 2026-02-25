@@ -16,11 +16,9 @@ public class EvChargerDAO {
 
     private final EvChargerMapper evChargerMapper;
 
-
     public void save(EvChargerVO evChargerVO) {
         evChargerMapper.insertEvCharger(evChargerVO);
     }
-
 
     public List<EvChargerVO> findAllByCompany(Long companyId) {
         return evChargerMapper.selectEvChargerList(companyId);
@@ -60,5 +58,8 @@ public class EvChargerDAO {
         evChargerMapper.deleteById(id);
     }
 
+    public boolean isDuplicateEvChargerUid(String evChargerUid) {
+        return evChargerMapper.countByEvChargerUid(evChargerUid) > 0;
+    }
 
 }

@@ -47,6 +47,6 @@ public interface EvChargerMapper {
     void deleteById(Long id);
 
 
-
+    int countByEvChargerUid(String evChargerUid);
 
 }

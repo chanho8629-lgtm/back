@@ -74,25 +74,25 @@ address, article, aside, b, body, a, button, canvas, caption, dl, dt, dd, div, h
 }
 
 button {
-/*    appearance: auto;*/
-/*    font-style:;*/
-/*    font-variant-ligatures: ;*/
-/*    font-variant-caps: ;*/
-/*    font-variant-numeric: ;*/
-/*    font-variant-east-asian: ;*/
-/*    font-variant-alternates: ;*/
-/*    font-variant-position: ;*/
-/*    font-variant-emoji: ;*/
-/*    font-weight: ;*/
-/*    font-stretch: ;*/
-/*    font-size: ;*/
-/*    font-family: ;*/
-/*    font-optical-sizing: ;*/
-/*    font-size-adjust: ;*/
-/*    font-kerning: ;*/
-/*    font-feature-settings: ;*/
-/*    font-variation-settings: ;*/
-/*    font-language-override: ;*/
+    appearance: auto;
+    font-style: ;
+    font-variant-ligatures: ;
+    font-variant-caps: ;
+    font-variant-numeric: ;
+    font-variant-east-asian: ;
+    font-variant-alternates: ;
+    font-variant-position: ;
+    font-variant-emoji: ;
+    font-weight: ;
+    font-stretch: ;
+    font-size: ;
+    font-family: ;
+    font-optical-sizing: ;
+    font-size-adjust: ;
+    font-kerning: ;
+    font-feature-settings: ;
+    font-variation-settings: ;
+    font-language-override: ;
     text-rendering: auto;
     color: buttontext;
     letter-spacing: normal;

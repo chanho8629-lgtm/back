@@ -1,5 +1,7 @@
 package com.app.ggshop.v1.domain;
+
 import com.app.ggshop.v1.audit.dateTime.Period;
+import com.app.ggshop.v1.common.enumeration.BoardFilter;
 import com.app.ggshop.v1.common.enumeration.Status;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -11,11 +13,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class BoardVO extends Period {
     private Long id;
-    private String boardTitle;
-    private String boardContent;
+    private String title;
+    private String content;
+    private BoardFilter boardFilter;
     private Status boardStatus;
     private Long boardMemberId;
-    private String boardFilter;
-
-
 }

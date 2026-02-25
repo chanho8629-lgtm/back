@@ -1,8 +1,10 @@
 package com.app.ggshop.v1.controller.employee;
 
 import com.app.ggshop.v1.dto.CompanyEmployeeDTO;
+import com.app.ggshop.v1.dto.MemberDTO;
 import com.app.ggshop.v1.dto.PostWithPagingDTO;
 import com.app.ggshop.v1.service.CompanyEmployeeService;
+import com.app.ggshop.v1.service.member.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +20,20 @@ import org.springframework.web.servlet.view.RedirectView;
 public class CompanyEmployeeController {
 
     private final CompanyEmployeeService companyEmployeeService;
+    private final MemberService memberService;
     private final HttpSession session;
+
+    @PostMapping("/signup")
+    public String signup(MemberDTO memberDTO) {
+        log.info("====================================");
+        log.info("회원가입 email : {}", memberDTO.getMemberEmail());
+        log.info("회원가입 name : {}", memberDTO.getMemberName());
+        log.info("회원가입 address : {}", memberDTO.getMemberAddress());
+        log.info("====================================");
+
+        memberService.insert(memberDTO);
+        return "redirect:/ev/main";
+    }
 
     // 임직원 등록 페이지
     @GetMapping("/write")
@@ -93,7 +108,7 @@ public class CompanyEmployeeController {
     // 임직원 상세 페이지
     @GetMapping("/emp/detail/{id}")
     public String employeeDetail(@PathVariable Long id, Model model) {
-        CompanyEmployeeDTO employee = companyEmployeeService.getDetail(id);  // ✅ 수정!
+        CompanyEmployeeDTO employee = companyEmployeeService.getDetail(id);  //  수정!
         model.addAttribute("employee", employee);
 
         log.info("▶ 임직원 상세 - ID: {}, 이름: {}", id, employee.getEmployeeName());
@@ -105,7 +120,7 @@ public class CompanyEmployeeController {
     @PostMapping("/emp/delete/{id}")
     public RedirectView deleteEmployee(@PathVariable Long id) {
         log.info("▶ 임직원 삭제 요청 - ID: {}", id);
-        companyEmployeeService.remove(id);  // ✅ 수정!
+        companyEmployeeService.remove(id);  //  수정!
         log.info("▶ 임직원 삭제 완료 - ID: {}", id);
 
         return new RedirectView("/ev/company/emp/list/1");
@@ -114,7 +129,7 @@ public class CompanyEmployeeController {
     // 임직원 수정 페이지
     @GetMapping("/emp/update/{id}")
     public String employeeUpdatePage(@PathVariable Long id, Model model) {
-        CompanyEmployeeDTO employee = companyEmployeeService.getDetail(id);  // ✅ 수정!
+        CompanyEmployeeDTO employee = companyEmployeeService.getDetail(id);  //  수정!
         model.addAttribute("employee", employee);
 
         log.info("▶ 임직원 수정 페이지 - ID: {}, 이름: {}", id, employee.getEmployeeName());
@@ -129,14 +144,10 @@ public class CompanyEmployeeController {
 
         log.info("▶ 임직원 수정 요청 - ID: {}, 이름: {}", id, employeeDTO.getEmployeeName());
 
-        companyEmployeeService.modify(employeeDTO);  // ✅ 수정!
+        companyEmployeeService.modify(employeeDTO);  //  수정!
 
         log.info("▶ 임직원 수정 완료 - ID: {}", id);
 
         return new RedirectView("/ev/company/emp/detail/" + id);
     }
-
-
-
-
 }

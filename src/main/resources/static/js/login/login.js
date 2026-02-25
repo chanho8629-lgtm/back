@@ -15,4 +15,3 @@ document.addEventListener("DOMContentLoaded", () => {
         button.classList.remove("active");
     });
 });
-

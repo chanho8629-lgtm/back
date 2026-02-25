@@ -15,3 +15,5 @@ create table tbl_ev_charger
 );
 DROP TABLE tbl_ev_charger;
 SET foreign_key_checks = 1;
+
+select * from tbl_ev_charger;

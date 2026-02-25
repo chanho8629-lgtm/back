@@ -1,146 +1,256 @@
 package com.app.ggshop.v1.controller.Member;
 
+
+import com.app.ggshop.v1.common.enumeration.Status;
 import com.app.ggshop.v1.dto.MemberDTO;
-import com.app.ggshop.v1.service.Login.MemberService;
+import com.app.ggshop.v1.service.member.MemberService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
+@RequestMapping("/member")
 @RequiredArgsConstructor
-@RequestMapping("/login")
+@Slf4j
 public class MemberController {
-
     private final MemberService memberService;
+    //    session: 서버에 저장(공용)
+    private final HttpSession session;
 
-//      이메일 입력 화면 및 비밀번호 입력 화면
-    @GetMapping("/join_update_6")
-    public String joinEmailPage(
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String error,
-            Model model) {
-
-        if (error != null) {
-            model.addAttribute("errorMsg", "wrongPassword".equals(error)
-                    ? "비밀번호가 일치하지 않습니다."
-                    : "계정 정보 확인 중 오류가 발생했습니다.");
-        }
-
-        boolean showPassword = false;
-
-        if (email != null && !email.isBlank()) {
-            // memberService.checkEmail이 true(사용가능=DB에없음)이면 회원가입으로
-            // false(중복=DB에있음)이면 비밀번호 입력창으로
-            boolean isNewUser = memberService.checkEmail(email);
-
-            if (!isNewUser) {
-                // DB에 존재함 (기존 회원) -> 비밀번호 입력창 노출
-                showPassword = true;
-                model.addAttribute("email", email);
-            } else {
-                // DB에 없음 (신규 회원) -> 회원가입 페이지 이동
-                return "redirect:/login/join_second?email=" + email;
-            }
-        }
-
-        model.addAttribute("showPassword", showPassword);
-        return "login/join_update_6";
+    @GetMapping("check-email")
+    @ResponseBody
+    public boolean checkEmail(String memberEmail){
+        return memberService.checkEmail(memberEmail);
     }
 
-//      이메일  (로그인 / 회원가입)
+    @GetMapping("join")
+    public String goToJoinForm(){
+        return "member/join";
+    }
 
-    @PostMapping("/join_update_6")
-    public String processEmail(
-            @RequestParam("username") String email,
-            @RequestParam(value = "password", required = false) String password,
-            HttpSession session) {
+    @GetMapping("kakao/join")
+    public String goToKakaoJoinForm(){
+        return "company-admin/kakao/join";
+    }
 
-        session.removeAttribute("loginMember");
+    @PostMapping("join")
+    public RedirectView join(MemberDTO memberDTO){
+        memberService.join(memberDTO);
+        return new RedirectView("/member/login");
+    }
 
-        // DB 존재 여부 확인 (false면 DB에 있음)
-        boolean isNewUser = memberService.checkEmail(email);
+    @PostMapping("kakao/join")
+    public RedirectView kakaoJoin(MemberDTO memberDTO){
+        memberService.kakaoJoin(memberDTO);
+        return new RedirectView("/member/login");
+    }
 
-        if (!isNewUser) {
-            // [CASE 1] 기존 회원 (DB에 있음)
-            if (password == null || password.isBlank()) {
-                // 비밀번호가 없으면 입력창 띄우러 다시 GET 호출
-                return "redirect:/login/join_update_6?email=" + email;
-            }
+    // 로그인 페이지 이동
+    @GetMapping("login")
+    public String goToLoginForm(@CookieValue(name="remember", required = false) boolean remember,
+                                @CookieValue(name="remember-member-email", required = false) String rememberMemberEmail,
+                                HttpServletRequest request,
+                                Model model){
+        model.addAttribute("remember", remember);
+        model.addAttribute("rememberMemberEmail", rememberMemberEmail);
+//        return "company-admin/login";
+        return "/login/login_mobile_check";
+    }
 
-            // 로그인 로직 실행
-            MemberDTO dto = new MemberDTO();
-            dto.setMemberEmail(email);
-            dto.setMemberPassword(password);
+    // 로그인 버튼을 누르면 포스트 로그인으로
+    @PostMapping("login")
+    public RedirectView login(MemberDTO memberDTO, Model model, HttpServletResponse response){
+        session.setAttribute("member", memberService.login(memberDTO));
 
-            try {
-                MemberDTO loginMember = memberService.login(dto);
-                session.setAttribute("loginMember", loginMember);
+        Cookie rememberMemberEmailCookie = new Cookie("remember-member-email", memberDTO.getMemberEmail());
+        Cookie rememberCookie = new Cookie("remember", String.valueOf(memberDTO.isRemember()));
 
-                return "redirect:/login/main";
-            } catch (Exception e) {
-                return "redirect:/login/join_update_6?error=wrongPassword&email=" + email;
-            }
+        rememberMemberEmailCookie.setPath("/");
+        rememberCookie.setPath("/");
 
-        } else {
-            // [CASE 2] 신규 회원 (DB에 없음) -> 회원가입 이동
-            return "redirect:/login/join_second?email=" + email;
+        if(memberDTO.isRemember()){
+//            rememberMemberEmailCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 유지
+//            rememberCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 유지
+
+            rememberMemberEmailCookie.setMaxAge(60 * 60 ); // 30일 유지
+            rememberCookie.setMaxAge(60 * 60 ); // 30일 유지
+
+        }else{
+            rememberMemberEmailCookie.setMaxAge(0); // 30일 유지
+            rememberCookie.setMaxAge(0); // 30일 유지
         }
+
+        response.addCookie(rememberMemberEmailCookie);
+        response.addCookie(rememberCookie);
+
+        return new RedirectView("/ev/main");
     }
 
-//     * [GET] 메인 페이지 (로그인 성공 후 접속)
+//    세션을 통째로 날리면 로그 아웃됨
+//    @GetMapping("/logout")
+//    public String logout(HttpSession session) {
+//        session.invalidate();
+////        return "redirect:/member/login";
+//        return "redirect:/ev/company/login";
+//    }
 
-    @GetMapping("/main")
-    public String mainPage(HttpSession session) {
-        if (session.getAttribute("loginMember") == null) {
-            return "redirect:/login/join_update_6";
-        }
-        // src/main/resources/templates/main.html을 호출
-        return "main";
-    }
-
-    @GetMapping("/join_second")
-    public String joinSecond(@RequestParam String email, Model model) {
-        model.addAttribute("email", email);
-        return "login/join_second";
-    }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public RedirectView logout(HttpSession session, HttpServletRequest request) {
+
+        log.info("============================================");
+        log.info("▶ 로그아웃 요청");
+        log.info("▶ Referer: {}", request.getHeader("Referer"));
+        log.info("▶ Request URL: {}", request.getRequestURL());
+        log.info("▶ Query String: {}", request.getQueryString());
+
+        // 세션 정보 확인
+//        MemberDTO member = (MemberDTO) session.getAttribute("member");
+//        if (member != null) {
+//            log.info("▶ 로그아웃 사용자: {}", member.getMemberName());
+//            log.info("▶ 로그인 타입: {}", member.getProvider() != null ? member.getProvider().getValue() : "일반");
+//        }
+
+        // 세션 무효화
         session.invalidate();
-        return "redirect:/login/join_update_6";
+
+        log.info("▶ 세션 무효화 완료");
+        log.info("▶ 로그아웃 성공");
+        log.info("============================================");
+
+        return new RedirectView("/ev/company/login");
+    }
+
+//    @GetMapping("/list/{page}")
+//    public String memberList(@PathVariable int page, Model model) {
+//
+//        // 백엔드 완성 전 임시 처리
+//        Map<String, Object> pagination = new HashMap<>();
+//        pagination.put("page", page);
+//        pagination.put("startPage", 1);
+//        pagination.put("endPage", 1);
+//        pagination.put("realEnd", 1);
+//
+//        model.addAttribute("memberList", List.of()); // 빈 목록
+//        model.addAttribute("pagination", pagination);
+//        model.addAttribute("searchType", "all");
+//        model.addAttribute("keyword", "");
+//
+//        return "company-admin/customer-list";
+//    }
+
+    @GetMapping("/list/{page}")
+    public String memberList(@PathVariable int page,
+                             @RequestParam(defaultValue = "all") String searchType,
+                             @RequestParam(defaultValue = "") String keyword,
+                             Model model) {
+
+        int pageSize = 10;
+        int offset = (page - 1) * pageSize;
+
+        List<MemberDTO> memberList = memberService.findAll(searchType, keyword, offset, pageSize);
+        int totalCount = memberService.countAll(searchType, keyword);
+
+        int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+        if (totalPages == 0) totalPages = 1;
+
+        int startPage = Math.max(1, page - 2);
+        int endPage = Math.min(totalPages, page + 2);
+
+        Map<String, Object> pagination = new HashMap<>();
+        pagination.put("page", page);
+        pagination.put("startPage", startPage);
+        pagination.put("endPage", endPage);
+        pagination.put("realEnd", totalPages);
+
+        log.info("====================================");
+        log.info("회원 수 : {}", totalCount);
+        log.info("현재 페이지 : {}", page);
+        log.info("====================================");
+
+        model.addAttribute("memberList", memberList);
+        model.addAttribute("pagination", pagination);
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("keyword", keyword);
+
+        return "company-admin/customer-list";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String memberDetail(@PathVariable Long id, Model model) {
+
+        MemberDTO member = memberService.findById(id);
+
+        log.info("====================================");
+        log.info("회원 id : {}", member.getId());
+        log.info("회원 이메일 : {}", member.getMemberEmail());
+        log.info("회원 이름 : {}", member.getMemberName());
+        log.info("====================================");
+
+        model.addAttribute("member", member);
+
+        // 나머지는 빈 리스트로 임시 처리
+        model.addAttribute("carList", List.of());
+        model.addAttribute("vtogList", List.of());
+        model.addAttribute("boardSellList", List.of());
+        model.addAttribute("boardPaymentList", List.of());
+        model.addAttribute("boardList", List.of());
+        model.addAttribute("followerList", List.of());
+        model.addAttribute("followingList", List.of());
+
+        return "company-admin/customer-detail";
+
+    }
+
+    // 수정 페이지 이동
+    @GetMapping("/update/{id}")
+    public String updateForm(@PathVariable Long id, Model model) {
+        MemberDTO member = memberService.findById(id);
+        model.addAttribute("member", member);
+        return "company-admin/customer-update";
+    }
+
+    // 수정 처리
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable Long id,
+                         @RequestParam String memberName,
+                         @RequestParam String memberNickname,
+                         @RequestParam(required = false) String memberBirth,
+                         @RequestParam(required = false) String memberAddress,
+                         @RequestParam String memberStatus) {
+
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setId(id);
+        memberDTO.setMemberName(memberName);
+        memberDTO.setMemberNickname(memberNickname);
+        memberDTO.setMemberBirth(memberBirth);
+        memberDTO.setMemberAddress(memberAddress);
+        memberDTO.setMemberStatus(Status.getStatus(memberStatus)); // "active" → Status.ACTIVE
+
+        memberService.update(memberDTO);
+
+        return "redirect:/member/detail/" + id;
+    }
+
+    // 삭제 처리
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Long id) {
+        memberService.deleteById(id);
+        return "redirect:/member/list/1";
     }
 
 
-//   POST 회원가입 완료 처리
-
-    @PostMapping("/join_second")
-    public String register(MemberDTO memberDTO) {
-        memberService.join(memberDTO);
-        System.out.println("{}}.............: " + memberDTO.toString());
-        return "redirect:/login/join_update_6";
-    }
-
-//      로그인/카카오 로그인 선택 페이지
-
-    @GetMapping("/login_mobile_check")
-    public String loginStartPage(@ModelAttribute("kakaoMember") MemberDTO kakaoMember, Model model) {
-
-        // 카카오 로그인을 통해 정보를 가지고 돌아온 경우
-        if (kakaoMember != null && kakaoMember.getMemberEmail() != null) {
-            model.addAttribute("email", kakaoMember.getMemberEmail());
-            model.addAttribute("isKakaoReturn", true); // 카카오 인증 후 돌아왔음을 표시
-        }
-
-        return "login/login_mobile_check";
-    }
-
-
-    @GetMapping("/go_email_join")
-    public String goEmailJoin() {
-
-        return "redirect:/login/join_update_6";
-    }
 
 }
+

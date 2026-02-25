@@ -6,3 +6,5 @@ create table tbl_board_tag
   tag_board_id bigint unsigned not null,
   constraint fk_tag_board_id foreign key (tag_board_id) references tbl_board (id)
 );
+
+drop table tbl_board_tag;

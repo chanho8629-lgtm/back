@@ -8,5 +8,6 @@ CREATE TABLE tbl_member_oauth
 );
 
 DROP TABLE tbl_member_oauth;
-SET foreign_key_checks = 0;
+SET foreign_key_checks = 1;
+
 select * from tbl_member_oauth;

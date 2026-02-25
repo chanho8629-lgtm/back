@@ -18,7 +18,6 @@ public class CompanyEmployeeDAO {
         companyEmployeeMapper.insertEmployee(companyEmployeeDTO);
     }
 
-
     // 임직원 목록 조회 (페이징)
     public List<CompanyEmployeeDTO> findAll(Criteria criteria) {
         return companyEmployeeMapper.selectAll(criteria);

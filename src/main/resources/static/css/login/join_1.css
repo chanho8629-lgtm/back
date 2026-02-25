@@ -361,7 +361,6 @@ a, button {
     font-weight: 400;
     line-height: 1.5;
     color: #f66;
-    display: none;
 }
 
 .EmailValidationForm-module_error__cbcb7 {
@@ -859,9 +858,3 @@ button:not(:disabled) {
             font-weight: 400;
             line-height: 1.5;
         }
-
-.EmailValidationForm-module_hidePassword__4d26c {
-    position: static !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}

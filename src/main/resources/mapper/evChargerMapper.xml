@@ -170,6 +170,8 @@
 
 
 
-
+    <select id="countByEvChargerUid" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM tbl_ev_charger WHERE ev_charger_uid = #{evChargerUid}
+    </select>
 
 </mapper>

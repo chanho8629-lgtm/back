@@ -14,15 +14,11 @@ CREATE TABLE tbl_member
     updated_date    DATETIME                       DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()
 );
 
-set foreign_key_checks = 1;
-
-delete from tbl_member;
-
 DROP TABLE tbl_member;
-
+set foreign_key_checks = 1;
 select * from tbl_member;
+select * from tbl_member_oauth;
 
-INSERT INTO tbl_member (id, member_email, member_password, member_name)
-VALUES (1, 'test@test.com', '1234', 'CC');
+
 
 

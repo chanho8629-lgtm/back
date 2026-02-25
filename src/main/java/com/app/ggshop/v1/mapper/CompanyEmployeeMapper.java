@@ -40,4 +40,7 @@ public interface CompanyEmployeeMapper {
             @Param("keyword") String keyword
     );
 
+    int countByEmployeeNumber(String employeeNumber);
+
+
 }

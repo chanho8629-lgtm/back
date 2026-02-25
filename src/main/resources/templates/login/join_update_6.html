@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/login/join_1.css">
-    <title>로그인/회원가입</title>
+    <title>이메일로 시작하기</title>
 </head>
 <body>
 <div id="root">
@@ -16,16 +16,33 @@
                         <header class="Header-module_container__da545">
                             <div class="Header-module_content__31d4e">
                                 <div class="Header-module_left__45013">
-                                    <button class="StyledComponent-module_container__2d5ce" aria-label="뒤로 가기" type="button" onclick="history.back()">
-                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" style="height: 24px; width: 24px;">
-                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M16.0757 2.57573L16.9243 3.42426L8.34851 12L16.9243 20.5757L16.0757 21.4243L6.65146 12L16.0757 2.57573Z" fill="#495057"></path>
+                                    <button class="StyledComponent-module_container__2d5ce"
+                                            aria-label="뒤로 가기"
+                                            type="button"
+                                            onclick="history.back()">
+                                        <svg viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             width="24"
+                                             class="WithProps-module_icon__d564b"
+                                             style="height: 24px; width: 24px;">
+                                            <path fill-rule="evenodd"
+                                                  clip-rule="evenodd"
+                                                  d="M16.0757 2.57573L16.9243 3.42426L8.34851 12L16.9243 20.5757L16.0757 21.4243L6.65146 12L16.0757 2.57573Z"
+                                                  fill="#495057">
+                                            </path>
                                         </svg>
                                     </button>
                                 </div>
                                 <div class="Header-module_center__3afb0"></div>
                                 <div class="Header-module_right__6c908">
-                                    <a class="StyledComponent-module_container__2d5ce" aria-label="홈으로 가기" href="/web/main">
-                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" style="height: 24px; width: 24px;">
+                                    <a class="StyledComponent-module_container__2d5ce"
+                                       aria-label="홈으로 가기"
+                                       th:href="@{/ev/main}">
+                                        <svg viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             width="24"
+                                             class="WithProps-module_icon__d564b"
+                                             style="height: 24px; width: 24px;">
                                             <path d="M21.6 7.67893L12 1.27893L2.40002 7.67893V21H3.60002V8.32115L12 2.72115L20.4 8.32115V21H21.6V7.67893Z" fill="#495057"></path>
                                             <path d="M15.6 21V12.4H8.40002V21H9.60002V13.6H14.4V21H15.6Z" fill="#495057"></path>
                                         </svg>
@@ -39,76 +56,57 @@
                     </div>
                 </div>
 
-                <!-- 에러 메시지 표시 -->
-                <div th:if="${errorMsg}" style="color: #f66; padding: 10px; margin-bottom: 10px; text-align: center;">
-                    <span th:text="${errorMsg}"></span>
-                </div>
-
                 <div class="EmailValidationForm-module_changeEmail__6c1fe">
-                    <form id="emailForm" class="EmailValidationForm-module_emailForm__a4d0f" method="post">
+                    <!--  Form 액션 수정 -->
+                    <form class="EmailValidationForm-module_emailForm__a4d0f"
+                          th:action="@{/ev/company/loginLv3}"
+                          method="post"
+                          id="emailForm">
                         <div class="EmailValidationForm-module_emailGroup__1b759">
                             <div class="EmailValidationForm-module_emailInputWrapper__970d8">
                                 <div class="EmailValidationForm-module_inputFields__2aa2d">
-
-                                    <!-- 이메일 입력 -->
                                     <div class="TextField-module_textField__404b4 TextField-module_lg__11d56 EmailValidationForm-module_emailTextField__afe05">
                                         <label for="username">
                                             <span><span>이메일</span></span>
                                             <span class="TextField-module_isRequired__294b9">*</span>
                                         </label>
                                         <div class="TextField-module_field__4d1fc TextField-module_noStartText TextField-module_noEndTex">
-                                            <input autocomplete="off"
+                                            <!--   name 속성 추가 -->
+                                            <input autocomplete="username"
                                                    inputmode="email"
                                                    placeholder="이메일 입력"
-                                                   name="username"
+                                                   name="memberEmail"
                                                    id="username"
                                                    type="email"
                                                    class="Input-module_input__210a1 Input-module_lg__592e9"
-                                                   th:value="${email}"
-                                                   aria-invalid="false">
-                                            <button aria-label="지우기" class="Button-module_button__d78c2 Button-module_lg__53dd9 Button-module_iconOnly__0a115 iconButton TextField-module_endIcon__aab7d TextField-module_clearIcon__c58f8" type="button">
-                                                <span><span>
-                                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M1.40002 12C1.40002 6.14581 6.14581 1.40002 12 1.40002C17.8542 1.40002 22.6 6.14581 22.6 12C22.6 17.8542 17.8542 22.6 12 22.6C6.14581 22.6 1.40002 17.8542 1.40002 12ZM7.3331 15.8184L11.1515 12.0001L7.3331 8.18167L8.18162 7.33315L12 11.1515L15.8184 7.33315L16.6669 8.18167L12.8485 12.0001L16.6669 15.8184L15.8184 16.667L12 12.8486L8.18162 16.667L7.3331 15.8184Z" fill="#495057"></path>
-                                                    </svg>
-                                                </span></span>
+                                                   aria-invalid="false"
+                                                   required>
+
+                                            <button aria-label="지우기"
+                                                    class="Button-module_button__d78c2 Button-module_lg__53dd9 Button-module_iconOnly__0a115 iconButton TextField-module_endIcon__aab7d TextField-module_clearIcon__c58f8"
+                                                    type="button">
+                                                    <span><span>
+                                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="WithProps-module_icon__d564b">
+                                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.40002 12C1.40002 6.14581 6.14581 1.40002 12 1.40002C17.8542 1.40002 22.6 6.14581 22.6 12C22.6 17.8542 17.8542 22.6 12 22.6C6.14581 22.6 1.40002 17.8542 1.40002 12ZM7.3331 15.8184L11.1515 12.0001L7.3331 8.18167L8.18162 7.33315L12 11.1515L15.8184 7.33315L16.6669 8.18167L12.8485 12.0001L16.6669 15.8184L15.8184 16.667L12 12.8486L8.18162 16.667L7.3331 15.8184Z" fill="#495057"></path>
+                                                        </svg>
+                                                    </span></span>
                                             </button>
                                         </div>
                                     </div>
-                                    <p class="EmailValidationForm-module_error__cbcb7" style="display:none;">올바른 이메일 주소를 입력해 주세요.</p>
-
-                                    <!-- 비밀번호 입력 (초기 숨김, 서버 showPassword=true면 표시) -->
-                                    <div id="passwordContainer" class="TextField-module_textField__404b4 TextField-module_lg__11d56">
-                                        <label for="password">
-                                            <span>비밀번호</span>
-                                            <span class="TextField-module_isRequired__294b9">*</span>
-                                        </label>
-                                        <div class="TextField-module_field__4d1fc TextField-module_noStartText TextField-module_noEndTex TextField-module_hasEndIcon">
-                                            <input autocomplete="current-password"
-                                                   name="password"
-                                                   placeholder="비밀번호 입력"
-                                                   id="password"
-                                                   type="password"
-                                                   class="Input-module_input__210a1 Input-module_lg__592e9"
-                                                   aria-invalid="false">
-                                            <button aria-label="비밀번호 보기" class="Button-module_button__d78c2 Button-module_text__47ff4 Button-module_lg__53dd9 Button-module_iconOnly__0a115 iconButton TextField-module_endIcon__aab7d TextField-module_passwordIcon__92654" type="button">
-                                                <span><span>
-                                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" fill="#495057"></path>
-                                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M21.9999 12C20.5443 7.33923 16.6167 4 12 4C7.38322 4 3.45561 7.33923 2 12C3.45561 16.6608 7.38322 20 12 20C16.6167 20 20.5443 16.6608 21.9999 12ZM17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z" fill="#495057"></path>
-                                                    </svg>
-                                                </span></span>
-                                            </button>
-                                        </div>
-                                    </div>
-
+                                    <p class="EmailValidationForm-module_error__cbcb7" style="display: none;">올바른 이메일 주소를 입력해 주세요.</p>
                                 </div>
 
-                                <button id="nextButton"
-                                        class="Button-module_button__d78c2 Button-module_mint__1c1d6 Button-module_contained__ecf2a Button-module_lg__53dd9 Button-module_block__d6eff Button-module_disabled__2ebf2"
+                                <!--  버튼 수정 -->
+                                <button class="Button-module_button__d78c2
+                                                    Button-module_mint__1c1d6
+                                                    Button-module_contained__ecf2a
+                                                    Button-module_lg__53dd9
+                                                    Button-module_block__d6eff
+                                                    Button-module_disabled__2ebf2"
                                         disabled
-                                        type="submit">
-                                    <span><span id="buttonText">다음</span></span>
+                                        type="submit"
+                                        id="nextButton">
+                                    <span><span>다음</span></span>
                                 </button>
                             </div>
                         </div>
@@ -117,93 +115,58 @@
 
                 <div class="FindIDPasswordSection-module_signUpMessage__f968d">
                     <div>
-                        <a href="/web/waccount/find/pwd">아이디/비밀번호 찾기</a>
+                        <a data-test-id="findPasswordLink"
+                           href="#">아이디/비밀번호 찾기</a>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 </div>
+</body>
 
-<script th:inline="javascript">
+<script type="text/javascript" src="/js/login/join.js"></script>
+
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const emailInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const passwordContainer = document.getElementById('passwordContainer');
-        const nextButton = document.getElementById('nextButton');
-        const buttonText = document.getElementById('buttonText');
-        const form = document.getElementById('emailForm');
         const errorMessage = document.querySelector('.EmailValidationForm-module_error__cbcb7');
+        const nextButton = document.getElementById('nextButton');
 
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // 이메일 입력 검증
+        emailInput.addEventListener('input', () => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        // 서버에서 전달받은 변수 (Thymeleaf)
-        const showPassword = /*[[${showPassword}]]*/ false;
+            if (emailRegex.test(emailInput.value)) {
+                // 유효한 이메일
+                nextButton.disabled = false;
+                nextButton.classList.remove('Button-module_disabled__2ebf2');
+                errorMessage.style.display = 'none';
+            } else {
+                // 유효하지 않은 이메일
+                nextButton.disabled = true;
+                nextButton.classList.add('Button-module_disabled__2ebf2');
 
-        // 초기 상태 설정 (서버 showPassword 기준)
-        if(showPassword) {
-            passwordContainer.style.display = 'block';
-            buttonText.textContent = '로그인';
-        } else {
-            passwordContainer.style.display = 'none';
-            buttonText.textContent = '다음';
-        }
-
-        // 입력값 검증 함수
-        function validate() {
-            const email = emailInput.value.trim();
-            const emailValid = emailRegex.test(email);
-
-            // 이메일 형식 에러 메시지 노출 여부
-            if(errorMessage) {
-                errorMessage.style.display = !emailValid && email.length > 0 ? 'block' : 'none';
-            }
-
-            let canProceed = false;
-            if(emailValid) {
-                if(showPassword) {
-                    // 로그인 모드: 비밀번호 입력 필수
-                    canProceed = passwordInput.value.trim().length > 0;
+                if (emailInput.value.length > 0) {
+                    errorMessage.style.display = 'block';
                 } else {
-                    // 다음 버튼 모드: 이메일만 있으면 됨
-                    canProceed = true;
+                    errorMessage.style.display = 'none';
                 }
             }
-
-            nextButton.disabled = !canProceed;
-            nextButton.classList.toggle('Button-module_disabled__2ebf2', !canProceed);
-        }
-
-        // 입력 이벤트 바인딩
-        emailInput.addEventListener('input', validate);
-        passwordInput.addEventListener('input', validate);
-
-        // 초기 실행
-        validate();
-
-        // [중요 수정] 기존의 e.preventDefault()와 window.location.href 로직을 삭제했습니다.
-        // 이제 폼은 자동으로 action="/login/join_update_6"으로 전송됩니다.
-        form.addEventListener('submit', () => {
-            // 전송 직전 버튼 비활성화를 방지하기 위해 추가 검증 없이 그대로 제출되도록 둡니다.
         });
 
-        // X 버튼 클릭 시 초기화
+        // 지우기 버튼
         document.addEventListener('click', (e) => {
             const clearBtn = e.target.closest('.TextField-module_clearIcon__c58f8');
             if (!clearBtn) return;
-            emailInput.value = '';
-            passwordInput.value = '';
-            validate();
-        });
 
-        // 비밀번호 보기/숨기기
-        document.addEventListener('click', (e) => {
-            const toggleBtn = e.target.closest('.TextField-module_passwordIcon__92654');
-            if (!toggleBtn) return;
-            passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+            emailInput.value = '';
+            emailInput.focus();
+            errorMessage.style.display = 'none';
+            nextButton.disabled = true;
+            nextButton.classList.add('Button-module_disabled__2ebf2');
         });
     });
 </script>
 
-</body>
 </html>

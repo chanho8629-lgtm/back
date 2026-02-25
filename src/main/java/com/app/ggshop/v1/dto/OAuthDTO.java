@@ -5,19 +5,14 @@ import com.app.ggshop.v1.domain.OAuthVO;
 import lombok.*;
 
 
-@Getter@Setter @ToString
-@EqualsAndHashCode(of = "id")
+@Getter @Setter @ToString
+@EqualsAndHashCode(of="id")
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class OAuthDTO {
-
     private Long id;
     private Provider provider;
 
-    public OAuthVO toVo(){ return OAuthVO.builder()
-            .id(id)
-            .provider(provider)
-            .build();
+    public OAuthVO toVO() {
+        return OAuthVO.builder().id(id).provider(provider).build();
     }
 }

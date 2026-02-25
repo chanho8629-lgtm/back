@@ -20,3 +20,4 @@ public class PostWithPagingDTO {
 
     private Criteria criteria;
 }
+

@@ -84,21 +84,16 @@
         </div>
     </div>
 
-
-
-
     <!-- 네비게이션 -->
     <nav class="nav" style="background-color: #00c4c4;">
         <div class="inner-container nav-inner">
             <ul class="menu">
                 <li><a th:href="@{/ev/main}">홈</a></li>
 
-
                 <li class="has-sub">
                     <a href="#"> 회원 관리 </a>
                     <ul class="sub-menu">
-                        <li><a th:href="@{/ev/evcharger}"> 회원 등록 </a></li>
-                        <li><a th:href="@{/ev/evcharger/list/1}"> 회원 목록 </a></li>
+                        <li><a th:href="@{/member/list/1}"> 회원 목록 </a></li>
                     </ul>
                 </li>
 
@@ -121,8 +116,8 @@
                 <li class="has-sub">
                     <a href="#">전력거래목록</a>
                     <ul class="sub-menu">
-                        <li><a th:href="@{/ev/company/list}"> 전력거래목록 </a></li>
-                        <li><a th:href="@{/ev/company/sidetap}"> 사이드바 </a></li>
+                        <li><a th:href="@{/vtog/transaction/create}"> 전력거래등록 </a></li>
+                        <li><a th:href="@{/vtog/transaction/list}"> 전력거래목록 </a></li>
                     </ul>
                 </li>
             </ul>

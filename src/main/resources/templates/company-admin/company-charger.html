@@ -33,7 +33,7 @@
     <div class="board-main">
         <ul>
             <li th:each="charger : ${chargerList}">
-                <!-- ✅ update → detail로 변경 -->
+                <!--  update → detail로 변경 -->
                 <a th:href="@{/ev/evcharger/detail/{id}(id=${charger.id})}" class="article no-thumb">
                     <div class="info-box">
                         <div class="info-inner">

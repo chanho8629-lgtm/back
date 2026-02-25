@@ -5,6 +5,7 @@ import com.app.ggshop.v1.common.pagination.Criteria;
 import com.app.ggshop.v1.domain.EvChargerVO;
 import com.app.ggshop.v1.dto.EvChargerDTO;
 import com.app.ggshop.v1.dto.PostWithPagingDTO;
+import com.app.ggshop.v1.mapper.EvChargerMapper;
 import com.app.ggshop.v1.repository.EvChargerDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +43,6 @@ public class EvChargerService {
 //        evChargerDAO.insertEvCharger(evChargerVO);
     }
 
-//    private final EvChargerDAO evChargerDAO;
-
-//    public List<EvChargerVO> getEvChargerList(Long companyId) {
-//        return evChargerDAO.findAllByCompany(companyId);
-//    }
-
     public List<EvChargerVO> getEvChargerList(Long companyId) {
         List<EvChargerVO> chargerList = evChargerDAO.findAllByCompany(companyId);
 
@@ -58,27 +53,6 @@ public class EvChargerService {
 
         return chargerList;
     }
-
-//    public PostWithPagingDTO list(int page){
-//
-//        PostWithPagingDTO postWithPagingDTO = new PostWithPagingDTO();
-//
-//        Criteria criteria = new Criteria(page, evChargerDAO.findTotal());
-//
-//        List<EvChargerDTO> evCharger = evChargerDAO.findAll(criteria);
-////
-////        criteria.setHasMore(posts.size() > criteria.getRowCount());
-////        postWithPagingDTO.setCriteria(criteria);
-////
-////        if(criteria.isHasMore()){
-////            posts.remove(posts.size() - 1);
-////        }
-////
-////
-////        postWithPagingDTO.setPosts(posts);
-//
-//        return postWithPagingDTO;
-//    }
 
 // 목록
     public PostWithPagingDTO list(int page){
@@ -140,4 +114,10 @@ public class EvChargerService {
     public void remove(Long id) {
         evChargerDAO.delete(id);
     }
+
+
+    public boolean isDuplicateEvChargerUid(String evChargerUid) {
+        return evChargerDAO.isDuplicateEvChargerUid(evChargerUid);
+    }
+
 }

@@ -148,5 +148,8 @@
         </choose>
     </select>
 
+    <select id="countByEmployeeNumber" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM tbl_company_employee WHERE company_employee_number = #{employeeNumber}
+    </select>
 
 </mapper>

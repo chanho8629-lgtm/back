@@ -14,3 +14,16 @@ create table tbl_car
 
 DROP TABLE tbl_car;
 SET foreign_key_checks = 1;
+
+
+INSERT INTO tbl_car (car_plate_number, car_energy_gauge, car_status, car_filter, car_member_id)
+VALUES ('12가 3456', '80', 'active', '양방향', 1);
+
+
+INSERT INTO tbl_car (car_plate_number, car_energy_gauge, car_status, car_filter, car_member_id)
+VALUES ('12가 3456', '80', 'active', '양방향', 1);
+
+SELECT id FROM tbl_car;-- member id 확인 후 수정
+
+INSERT INTO tbl_vtog_payment (vtog_payment_sales_kwh, vtog_payment_sales_price, vtog_car_id, vtog_ev_charger_id)
+VALUES (100, 50000, 1, 6);

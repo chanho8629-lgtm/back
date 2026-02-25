@@ -44,8 +44,6 @@ public class CompanyEmployeeService {
 //        return postWithPagingDTO;
 //    }
 
-
-
     /**
      * 임직원 목록 (기존 - 전체 목록)
      */
@@ -61,7 +59,6 @@ public class CompanyEmployeeService {
         if (criteria.isHasMore()) {
             list.remove(list.size() - 1);
         }
-
         postWithPagingDTO.setEmployeeList(list);
         postWithPagingDTO.setCriteria(criteria);
 
@@ -98,22 +95,20 @@ public class CompanyEmployeeService {
             // 검색 없으면 기존 메서드 호출
             return list(page);
         }
-
         return postWithPagingDTO;
     }
 
-
-    // ✅ 임직원 상세 조회
+    // 임직원 상세 조회
     public CompanyEmployeeDTO getDetail(Long id) {
         return companyEmployeeDAO.findById(id);
     }
 
-    // ✅ 임직원 수정
+    // 임직원 수정
     public void modify(CompanyEmployeeDTO companyEmployeeDTO) {
         companyEmployeeDAO.update(companyEmployeeDTO);
     }
 
-    // ✅ 임직원 삭제
+    // 임직원 삭제
     public void remove(Long id) {
         companyEmployeeDAO.delete(id);
     }
