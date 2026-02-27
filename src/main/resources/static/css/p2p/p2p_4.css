@@ -866,6 +866,8 @@ a.Button_button__1U5se {
     background-color: #212529 !important;
     padding-right: 20px !important;
     padding-left: 20px !important;
+    margin-left: 76px;
+
 }
 
 .Button_button__1U5se.Button_gray__2MMct {
@@ -4598,7 +4600,7 @@ element.style {
 
 .CommunityArea_replyToggle__Qu23y.active .reply-arrow {
     transform: rotate(180deg);
-}*/
+}
 
 
 /* 댓글 전체 영역 기본 숨김 */

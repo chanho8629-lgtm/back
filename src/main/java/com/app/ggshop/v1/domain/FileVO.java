@@ -15,4 +15,5 @@ public class FileVO {
     private String fileSize;
     private String filePath;
     private Status fileStatus;
+    private String fileOriginalName;
 }

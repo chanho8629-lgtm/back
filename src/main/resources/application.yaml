@@ -8,7 +8,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ggshop?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    url: jdbc:mysql:/54.180.157.6/ggshop?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: ggshop
     password: 1234
 
@@ -24,4 +24,4 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath*:/mapper/*.xml
   type-aliases-package: com.app.ggshop.v1.domain; com.app.ggshop.v1.dto;
-  type-handlers-package: com.app.ggshop.v1.mybatis.handler
+  type-handlers-package: com.app.ggshop.v1.mybatis.common.handler

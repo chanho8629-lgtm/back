@@ -26,6 +26,40 @@ buttons.forEach((btn) => {
     });
 });
 
+
+document.addEventListener("DOMContentLoaded", function() {
+    const followBtn = document.getElementById("followBtn");
+
+    followBtn.addEventListener("click", async function() {
+        const followeeId = this.dataset.followeeId;
+        // 현재 로그인한 사용자의 ID는 세션 또는 JWT로 서버에서 처리
+        // 아래 예시는 세션에서 서버가 자동으로 추출한다고 가정
+        try {
+            const response = await fetch('/follow/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `followeeId=${followeeId}`
+            });
+
+            if (!response.ok) throw new Error("서버 요청 실패");
+
+            const data = await response.json();
+
+            if (data.following) {
+                followBtn.textContent = "팔로우 취소";
+            } else {
+                followBtn.textContent = "팔로우";
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("팔로우 처리 중 오류가 발생했습니다.");
+        }
+    });
+});
+
 // 댓글 토글 버튼
 
 document

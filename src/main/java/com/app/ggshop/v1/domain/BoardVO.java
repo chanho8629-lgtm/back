@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @ToString(callSuper = true)
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
 public class BoardVO extends Period {

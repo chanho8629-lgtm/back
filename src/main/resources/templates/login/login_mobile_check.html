@@ -11,7 +11,7 @@
     <script>
         function kakaoLogin() {
             const REST_API_KEY = '6c18b17524346d570019e84351780311';
-            const REDIRECT_URI = 'http://localhost:10000/kakao/login';
+            const REDIRECT_URI = 'http://43.203.220.187/kakao/login';
             const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
             location.href = KAKAO_AUTH_URL;

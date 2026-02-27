@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/p2p/p2p_write.css">
-    <link rel="stylesheet" href="/css/p2p/p2p_write_modal.css">
+    <link rel="stylesheet" href="/css/p2p/p2p_write.css" th:href="@{/css/p2p/p2p_write.css}">
+    <link rel="stylesheet" href="/css/p2p/p2p_write_modal.css" th:href="@{/css/p2p/p2p_write_modal.css}">
     <title>P2P 전력거래 게시글 작성</title>
     <style>
         .ReactModalPortal {
@@ -15,6 +15,7 @@
             cursor: not-allowed;
         }
     </style>
+    <link rel="stylesheet" href="/css/p2p/board-form-modern.css" th:href="@{/css/p2p/board-form-modern.css}">
 </head>
 <body>
 <div id="root">
@@ -67,7 +68,7 @@
             <div id="AppLayout_Contents" class="AppLayout_contents__N2Q2M">
 
                 <!-- ✅ Form 시작 -->
-                <form th:action="@{/ev/p2p/write}" method="post" enctype="multipart/form-data" id="boardForm">
+                <form th:action="@{/p2p/write}" method="post" enctype="multipart/form-data" id="boardForm">
 
                     <main class="FundingPage_container__NmZmM">
                         <div id="FundingPage_Content" class="FundingPage_box__NmQyY FundingPage_footer__Nzg5N">
@@ -275,18 +276,20 @@
                                                     </div>
                                                     <div class="Section_content__OGY2N">
                                                         <!-- ✅ 간단한 파일 input -->
-                                                        <input
-                                                                type="file"
-                                                                name="images"
-                                                                id="simple-image-upload"
-                                                                multiple
-                                                                accept="image/*"
-                                                                style="margin: 20px 0;">
+                                                        <div class="file-picker">
+                                                            <label for="simple-image-upload" class="file-trigger">사진 선택하기</label>
+                                                            <input
+                                                                    type="file"
+                                                                    name="images"
+                                                                    id="simple-image-upload"
+                                                                    multiple
+                                                                    accept="image/*">
+                                                        </div>
 
                                                         <!-- 선택된 파일 표시 -->
-                                                        <div id="file-list" style="margin: 10px 0; padding: 10px; background: #f5f5f5;">
+                                                        <div id="file-list" class="file-list-box">
                                                             <p>선택된 파일: <span id="file-count">0</span>개</p>
-                                                            <ul id="file-names"></ul>
+                                                            <div id="file-preview-grid" class="file-preview-grid"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -348,6 +351,7 @@
                                                                             class="Input_input__YTViM Input_lg__N2QwY">
                                                                 </div>
                                                             </div>
+                                                            <div id="tagsContainer" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div>
                                                             <div class="TagField_tagCountLabel__NWM1N" id="tagCounter">0/10개의 태그</div>
                                                         </div>
                                                     </div>
@@ -386,39 +390,81 @@
 
 <!-- JavaScript -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script type="text/javascript" src="/js/p2p/p2p_write_gg.js"></script>
-
+<script type="text/javascript" src="/js/p2p/p2p_write_gg.js" th:src="@{/js/p2p/p2p_write_gg.js}"></script>
 <script>
-    // ===== 간단한 파일 처리 (썸네일 없이) =====
+    // ===== [1] 파일 처리 =====
     const simpleFileInput = document.getElementById("simple-image-upload");
     const fileCount = document.getElementById("file-count");
-    const fileNames = document.getElementById("file-names");
+    const filePreviewGrid = document.getElementById("file-preview-grid");
+    const selectedFiles = [];
+
+    const syncFileInput = () => {
+        const dt = new DataTransfer();
+        selectedFiles.forEach((file) => dt.items.add(file));
+        simpleFileInput.files = dt.files;
+        fileCount.textContent = selectedFiles.length;
+    };
+
+    const renderFilePreview = () => {
+        filePreviewGrid.innerHTML = "";
+
+        selectedFiles.forEach((file, index) => {
+            if (!file._previewUrl) {
+                file._previewUrl = URL.createObjectURL(file);
+            }
+
+            const item = document.createElement("div");
+            item.className = "file-preview-item";
+
+            const img = document.createElement("img");
+            img.src = file._previewUrl;
+            img.alt = file.name;
+
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.className = "file-remove-btn";
+            removeBtn.textContent = "×";
+            removeBtn.addEventListener("click", () => {
+                const removed = selectedFiles.splice(index, 1)[0];
+                if (removed && removed._previewUrl) {
+                    URL.revokeObjectURL(removed._previewUrl);
+                }
+                syncFileInput();
+                renderFilePreview();
+            });
+
+            const name = document.createElement("div");
+            name.className = "file-preview-name";
+            name.textContent = file.name;
+
+            item.appendChild(img);
+            item.appendChild(removeBtn);
+            item.appendChild(name);
+            filePreviewGrid.appendChild(item);
+        });
+    };
 
     simpleFileInput.addEventListener("change", (e) => {
-        const files = e.target.files;
+        const incomingFiles = Array.from(e.target.files || []);
 
-        // 최대 3개 제한
-        if (files.length > 3) {
-            alert("이미지는 최대 3개까지 선택 가능합니다.");
-            simpleFileInput.value = "";  // 초기화
-            return;
+        for (const file of incomingFiles) {
+            if (!file.type.startsWith("image/")) {
+                continue;
+            }
+            if (selectedFiles.length >= 3) {
+                alert("이미지는 최대 3개까지 선택 가능합니다.");
+                break;
+            }
+            selectedFiles.push(file);
         }
 
-        // 파일 개수 표시
-        fileCount.textContent = files.length;
+        syncFileInput();
+        renderFilePreview();
 
-        // 파일명 목록 표시
-        fileNames.innerHTML = '';
-        for (let i = 0; i < files.length; i++) {
-            const li = document.createElement("li");
-            li.textContent = `${files[i].name} (${(files[i].size / 1024).toFixed(2)} KB)`;
-            fileNames.appendChild(li);
-        }
-
-        console.log("▶ 선택된 파일:", files.length + "개");
+        console.log("▶ 선택된 파일:", selectedFiles.length + "개");
     });
 
-    // 제목 글자수 카운터
+    // ===== [2] 제목/요약 글자수 카운터 =====
     const titleInput = document.getElementById("titleInput");
     const titleCounter = document.getElementById("titleCounter");
     titleInput.addEventListener("input", () => {
@@ -426,7 +472,6 @@
         titleCounter.textContent = `${remaining}자 남음`;
     });
 
-    // 요약 글자수 카운터
     const summaryInput = document.getElementById("summaryInput");
     const summaryCounter = document.getElementById("summaryCounter");
     summaryInput.addEventListener("input", () => {
@@ -434,26 +479,69 @@
         summaryCounter.textContent = `${remaining}자 남음`;
     });
 
-    // 태그 카운터
-    const tagsInput = document.getElementById("tagsInput");
-    const tagCounter = document.getElementById("tagCounter");
-    tagsInput.addEventListener("input", () => {
-        const tags = tagsInput.value.split(/[,\s]+/).filter(t => t.trim() !== '');
-        const count = Math.min(tags.length, 10);
-        tagCounter.textContent = `${count}/10개의 태그`;
+    // ===== [3] 태그 관리 =====
+    const tagsInput = document.getElementById("tagsInput"); // 입력창
+    const tagsContainer = document.getElementById("tagsContainer"); // 태그 박스
+    const tagCounter = document.getElementById("tagCounter"); // 카운터
+    let tags = [];
+
+    function updateTagsDisplay() {
+        tagsContainer.innerHTML = "";
+        tags.forEach((tag, index) => {
+            const tagEl = document.createElement("span");
+            tagEl.className = "tag";
+            tagEl.textContent = tag;
+
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.textContent = "x";
+            removeBtn.className = "remove-tag";
+            removeBtn.addEventListener("click", () => {
+                tags.splice(index, 1);
+                updateTagsDisplay();
+                updateTagCounter();
+            });
+
+            tagEl.appendChild(removeBtn);
+
+            // 숨겨진 input으로 Form에 전송
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "boardTagNames";
+            hiddenInput.value = tag;
+            tagEl.appendChild(hiddenInput);
+
+            tagsContainer.appendChild(tagEl);
+        });
+    }
+
+    function updateTagCounter() {
+        tagCounter.textContent = `${tags.length}/10개의 태그`;
+    }
+
+    tagsInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const inputTag = tagsInput.value.trim().replace("#", "");
+            if (!inputTag || tags.includes(inputTag) || tags.length >= 10) return;
+
+            tags.push(inputTag);
+            updateTagsDisplay();
+            updateTagCounter();
+            tagsInput.value = "";
+        }
     });
 
-    // Form 제출 전 내용 설정
+    // ===== [4] Form 제출 전 처리 =====
     document.getElementById("boardForm").addEventListener("submit", (e) => {
         const files = simpleFileInput.files;
         console.log("▶ Form 제출 시 파일:", files.length + "개");
 
-        // 내용 = 요약 (임시)
         const content = summaryInput.value || titleInput.value;
         document.getElementById("contentInput").value = content;
     });
 
-    // 주소 체크박스
+    // ===== [5] 주소 체크박스 =====
     const checkbox = document.getElementById("chk");
     const addressInput = document.getElementById("addressInput");
     const defaultAddress = "서울특별시 용산구 새창로 181";
@@ -469,12 +557,11 @@
         }
     });
 
-    // 다음 주소 API
+    // ===== [6] 다음 주소 API =====
     function sample4_execDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
-                var roadAddr = data.roadAddress;
-                document.getElementById("addressInput").value = roadAddr;
+                document.getElementById("addressInput").value = data.roadAddress;
             }
         }).open();
     }

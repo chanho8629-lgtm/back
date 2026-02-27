@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.ggshop.v1.mapper.HomeMapper">
+
+    <select id="selectRecentCards" resultType="com.app.ggshop.v1.dto.main.MainCardDTO">
+        select
+            b.id,
+            b.title,
+            b.content,
+            b.board_filter as boardFilter,
+            m.member_name as memberName,
+            date_format(b.created_date, '%Y-%m-%d') as createdDate
+        from ggshop.tbl_board b
+        join ggshop.tbl_member m on m.id = b.board_member_id
+        where b.board_status = 'active'
+        order by b.created_date desc
+        limit #{limit}
+    </select>
+
+    <select id="selectActivePostCount" resultType="int">
+        select count(*)
+        from ggshop.tbl_board
+        where board_status = 'active'
+    </select>
+
+</mapper>

@@ -45,6 +45,30 @@ public class MemberService {
         return toDTO(foundMember.orElseThrow(LoginFailException::new));
     }
 
+    // 로그인 시 계정이 없으면 자동 가입 후 로그인
+    public MemberDTO loginOrAutoRegister(MemberDTO memberDTO) {
+        Optional<MemberDTO> foundMember = memberDAO.findByMemberEmail(memberDTO.getMemberEmail());
+
+        if (foundMember.isEmpty()) {
+            memberDTO.setProvider(Provider.THREETIER);
+            if (memberDTO.getMemberName() == null || memberDTO.getMemberName().isBlank()) {
+                String email = memberDTO.getMemberEmail();
+                String defaultName = email != null && email.contains("@")
+                        ? email.substring(0, email.indexOf('@'))
+                        : "user";
+                memberDTO.setMemberName(defaultName);
+            }
+            if (memberDTO.getMemberAddress() == null) {
+                memberDTO.setMemberAddress("-");
+            }
+
+            memberDAO.save(memberDTO);
+            memberDAO.saveOAuth(memberDTO.toOAuthVO());
+        }
+
+        return login(memberDTO);
+    }
+
     /**
      * 로그인
      */

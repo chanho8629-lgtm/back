@@ -1,10 +1,12 @@
 package com.app.ggshop.v1.mapper;
 
+import com.app.ggshop.v1.domain.FileVO;
 import com.app.ggshop.v1.dto.FileDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface FileMapper {
@@ -16,4 +18,9 @@ public interface FileMapper {
 
     // 게시글의 파일 목록 조회
     List<FileDTO> selectFilesByBoardId(Long boardId);
+
+    //    삭제
+    public void delete(Long id);
+    //    조회
+    public Optional<FileVO> selectById(Long id);
 }

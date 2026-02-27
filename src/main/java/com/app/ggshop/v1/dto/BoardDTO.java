@@ -5,6 +5,9 @@ import com.app.ggshop.v1.common.enumeration.Status;
 import com.app.ggshop.v1.domain.BoardVO;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -17,9 +20,11 @@ public class BoardDTO {
     private String summary;         // 요약
     private BoardFilter boardFilter;
     private Status boardStatus;
-    private String createdDatetime;
-    private String updatedDatetime;
+    private String createdDate;
+    private String updatedDate;
     private Long boardMemberId;
+    private String representativeFilePath;
+    private String representativeFileName;
 
     /**
      * 제목에서 [구매자] 또는 [판매자] 파싱
@@ -39,6 +44,13 @@ public class BoardDTO {
         }
     }
 
+    private List<BoardTagDTO> boardTags = new ArrayList<>();
+    private String[] tagIdsToDelete;
+
+    private List<BoardFileDTO> boardFiles = new ArrayList<>();
+    private String[] fileIdsToDelete;
+
+
     public BoardVO toVO() {
         return BoardVO.builder()
                 .id(id)
@@ -46,8 +58,8 @@ public class BoardDTO {
                 .content(content)
                 .boardFilter(boardFilter)
                 .boardStatus(boardStatus)
-                .createdDate (createdDatetime)
-                .updatedDate (updatedDatetime)
+                .createdDate (createdDate)
+                .updatedDate (updatedDate)
                 .boardMemberId(boardMemberId)
                 .build();
     }

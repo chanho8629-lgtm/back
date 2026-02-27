@@ -17,6 +17,7 @@ SET foreign_key_checks = 1;
 
 
 select * from tbl_board;
+DESC tbl_board;
 
 
 SELECT * FROM tbl_file;

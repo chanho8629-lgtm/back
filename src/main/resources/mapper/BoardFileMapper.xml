@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.ggshop.v1.mapper.BoardFileMapper">
+
+    <insert id="insert">
+        insert into tbl_board_file (id, board_id)
+        values (#{id}, #{boardid})
+    </insert>
+
+    <select id="selectAllByBoardId" resultType="com.app.ggshop.v1.dto.BoardFileDTO">
+        select
+            id,
+            file_path as filePath,
+            file_name as fileName,
+            file_original_name as fileOriginalName,
+            file_size as fileSize,
+            board_id as boardId,
+            created_date as createdDate,
+            updated_date as updatedDate
+        from view_board_file
+        where board_id = #{id}
+        order by created_date desc
+    </select>
+
+    <delete id="delete">
+        delete from tbl_board_file
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteByBoardId">
+        delete from tbl_board_file
+        where board_id = #{id}
+    </delete>
+
+</mapper>

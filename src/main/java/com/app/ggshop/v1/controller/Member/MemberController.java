@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/member")
+@RequestMapping("/login")
 @RequiredArgsConstructor
 @Slf4j
 public class MemberController {
@@ -34,9 +34,9 @@ public class MemberController {
         return memberService.checkEmail(memberEmail);
     }
 
-    @GetMapping("join")
+    @GetMapping("join_update_6")
     public String goToJoinForm(){
-        return "member/join";
+        return "/login/join_update_6";
     }
 
     @GetMapping("kakao/join")
@@ -71,7 +71,7 @@ public class MemberController {
     // 로그인 버튼을 누르면 포스트 로그인으로
     @PostMapping("login")
     public RedirectView login(MemberDTO memberDTO, Model model, HttpServletResponse response){
-        session.setAttribute("member", memberService.login(memberDTO));
+        session.setAttribute("member", memberService.loginOrAutoRegister(memberDTO));
 
         Cookie rememberMemberEmailCookie = new Cookie("remember-member-email", memberDTO.getMemberEmail());
         Cookie rememberCookie = new Cookie("remember", String.valueOf(memberDTO.isRemember()));
@@ -129,7 +129,7 @@ public class MemberController {
         log.info("▶ 로그아웃 성공");
         log.info("============================================");
 
-        return new RedirectView("/ev/company/login");
+        return new RedirectView("/main");
     }
 
 //    @GetMapping("/list/{page}")

@@ -4,20 +4,40 @@
 
     <!-- 태그 등록 -->
     <insert id="insertTag" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tbl_board_tag (
+        insert into tbl_board_tag (
             tag_name,
             tag_board_id
-        ) VALUES (
+        ) values (
                      #{tagName},
                      #{tagBoardId}
                  )
     </insert>
 
     <!-- 게시글의 태그 목록 조회 -->
-    <select id="selectTagsByBoardId" resultType="String">
-        SELECT tag_name
-        FROM tbl_board_tag
-        WHERE tag_board_id = #{boardId}
+    <select id="selectAllByBoardId" resultType="com.app.ggshop.v1.domain.BoardTagVO">
+        select
+            id,
+            tag_name as tagName,
+            tag_board_id as tagBoardId
+        from tbl_board_tag
+        where tag_board_id = #{id}
+        order by id desc
     </select>
+
+    <select id="selectAll" resultType="string">
+        select distinct tag_name
+        from tbl_board_tag
+        order by tag_name asc
+    </select>
+
+    <delete id="delete">
+        delete from tbl_board_tag
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteByBoardId">
+        delete from tbl_board_tag
+        where tag_board_id = #{id}
+    </delete>
 
 </mapper>

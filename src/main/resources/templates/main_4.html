@@ -3,26 +3,20 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/common/font.css" />
-    <link rel="stylesheet" href="/css/common/reset.css" />
-    <link rel="stylesheet" href="/css/common/fontawesome.css" />
-    <link rel="stylesheet" href="/css/common/common.css" />
-    <link rel="stylesheet" href="/css/common/util.css" />
-    <link rel="stylesheet" href="/css/components/headers/header-m.css" />
-    <link rel="stylesheet" href="/css/components/navigations/navigation-m.css" />
-    <link rel="stylesheet" href="/css/components/modals/modal-m.css" />
-    <link rel="stylesheet" href="/css/main/style.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon/favicon.ico">
+    <link rel="stylesheet" href="/css/common/font.css" th:href="@{/css/common/font.css}" />
+    <link rel="stylesheet" href="/css/common/reset.css" th:href="@{/css/common/reset.css}" />
+    <link rel="stylesheet" href="/css/common/fontawesome.css" th:href="@{/css/common/fontawesome.css}" />
+    <link rel="stylesheet" href="/css/common/common.css" th:href="@{/css/common/common.css}" />
+    <link rel="stylesheet" href="/css/common/util.css" th:href="@{/css/common/util.css}" />
+    <link rel="stylesheet" href="/css/components/headers/header-m.css" th:href="@{/css/components/headers/header-m.css}" />
+    <link rel="stylesheet" href="/css/components/navigations/navigation-m.css" th:href="@{/css/components/navigations/navigation-m.css}" />
+    <link rel="stylesheet" href="/css/components/modals/modal-m.css" th:href="@{/css/components/modals/modal-m.css}" />
+    <link rel="stylesheet" href="/css/main/style.css" th:href="@{/css/main/style.css}" />
+    <link rel="shortcut icon" type="image/x-icon" href="/images/favicon/favicon.ico" th:href="@{/images/favicon/favicon.ico}">
     <title>Main</title>
 </head>
 <body>
 <div id="app" class="main">
-    <!-- 세션 디버깅 - 확인 후 삭제 -->
-    <div th:text="${session}" style="font-size:12px; color:red; padding:10px;"></div>
-
-    <!-- 세션 디버깅 - 확인 후 삭제 -->
-    <div th:each="entry : ${session}" th:text="${entry.key} + ' = ' + ${entry.value}"
-         style="font-size:12px; color:red; padding:4px;"></div>
     <!-- 상단 배너 영역 -->
     <div class="headBanner-container">
         <div class="headBanner-left">
@@ -83,11 +77,15 @@
             <div class="main-content card-container">
                 <div class="section-wrap section-header mt5 mb15">
                     <div class="sectionTitle-container">
-                        <h2 class="sectionTitle-txt title_md">찜한 구매 항목이에요.</h2>
+                        <h2 class="sectionTitle-txt title_md" th:text="${mainPage.displayName} + '님 추천 거래'">추천 거래</h2>
+                    </div>
+                    <div class="maker-container">
+                        <span class="maker-name"
+                              th:text="'활성 게시글 ' + ${mainPage.activePostCount} + '건'">활성 게시글 0건</span>
                     </div>
                 </div>
-                <div class="card-wrap card_hasShadow">
-                    <a class="card-content" href="#!">
+                <div class="card-wrap card_hasShadow" th:each="card : ${mainPage.recentCards}">
+                    <a class="card-content" th:href="@{/p2p/list}">
                         <div class="thumb-container">
                             <img class="thumb-img" src="/image/genesis.png" alt="" />
                             <div class="thumb_overlay">
@@ -103,15 +101,33 @@
                         </div>
                         <div class="content_container">
                             <div class="status_container">
-                                <div class="title title-mint title-lg">타이틀영역입니다.</div>
+                                <div class="title title-mint title-lg" th:text="${card.title}">타이틀</div>
                             </div>
-                            <div class="title-container">[구매] 내용입니다.</div>
+                            <div class="title-container"
+                                 th:text="'[' + ${card.boardFilter} + '] ' + ${card.content}">[구매] 내용</div>
                             <div class="maker-container">
-                                <span class="maker-name">게시자 이름</span>
-                                <i class="fa-solid fa-battery-quarter mt1" style="display: flex; align-items: center; color: #ffc53d;"></i>
+                                <span class="maker-name"
+                                      th:text="${card.memberName} + ' · ' + ${card.createdDate}">게시자 · 날짜</span>
+                                <i class="fa-solid fa-battery-quarter mt1"
+                                   style="display: flex; align-items: center; color: #ffc53d;"
+                                   th:if="${card.boardFilter == '구매'}"></i>
+                                <i class="fa-solid fa-battery-half mt1"
+                                   style="display: flex; align-items: center; color: #b9eb45;"
+                                   th:if="${card.boardFilter == '판매'}"></i>
+                                <i class="fa-solid fa-battery-full mt1"
+                                   style="display: flex; align-items: center; color: #52c41a;"
+                                   th:if="${card.boardFilter != '구매' and card.boardFilter != '판매'}"></i>
                             </div>
                         </div>
                     </a>
+                </div>
+                <div class="card-wrap card_hasShadow" th:if="${#lists.isEmpty(mainPage.recentCards)}">
+                    <div class="content_container">
+                        <div class="status_container">
+                            <div class="title title-mint title-lg">등록된 거래 글이 없습니다.</div>
+                        </div>
+                        <div class="title-container">첫 거래글을 작성해 메인에 노출해 보세요.</div>
+                    </div>
                 </div>
             </div>
 
@@ -380,15 +396,15 @@
 </div>
 
 <!-- Event handler -->
-<script src="/js/headers/header-m.js"></script>
-<script src="/js/modals/modal-m.js"></script>
-<script src="/js/navigations/navigation-m.js"></script>
-<script src="/js/navigations/quick_navigation-m.js"></script>
-<script src="/js/main/event.js"></script>
-<script src="/js/banner/banner.js"></script>
+<script src="/js/headers/header-m.js" th:src="@{/js/headers/header-m.js}"></script>
+<script src="/js/modals/modal-m.js" th:src="@{/js/modals/modal-m.js}"></script>
+<script src="/js/navigations/navigation-m.js" th:src="@{/js/navigations/navigation-m.js}"></script>
+<script src="/js/navigations/quick_navigation-m.js" th:src="@{/js/navigations/quick_navigation-m.js}"></script>
+<script src="/js/main/event.js" th:src="@{/js/main/event.js}"></script>
+<script src="/js/banner/banner.js" th:src="@{/js/banner/banner.js}"></script>
 
 <!-- Chart.js -->
-<script src="/js/api/chart.min.js"></script>
+<script src="/js/api/chart.min.js" th:src="@{/js/api/chart.min.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 

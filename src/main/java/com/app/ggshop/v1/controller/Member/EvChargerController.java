@@ -175,15 +175,6 @@ public class EvChargerController {
 //        return "/p2p/p2p_list";
     }
 
-    @GetMapping("/main")
-    public String chargerMain () {
-
-//        return "main_3";
-//        return "main";
-
-        return "main_4";
-    }
-
     @GetMapping("/p2p/list")
     public String p2p() {
 
