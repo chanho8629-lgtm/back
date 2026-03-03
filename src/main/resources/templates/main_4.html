@@ -111,7 +111,14 @@
                 <div class="card-wrap card_hasShadow" th:each="card : ${mainPage.recentCards}">
                     <a class="card-content" th:href="@{/p2p/list}">
                         <div class="thumb-container">
-                            <img class="thumb-img" src="/image/genesis.png" alt="" />
+                            <img class="thumb-img"
+                                 th:if="${card.representativeFilePath != null and card.representativeFileName != null}"
+                                 th:src="@{/api/files/display(filePath=${card.representativeFilePath}, fileName=${card.representativeFileName})}"
+                                 alt="게시글 이미지" />
+                            <img class="thumb-img"
+                                 th:if="${card.representativeFilePath == null or card.representativeFileName == null}"
+                                 src="/image/genesis.png"
+                                 alt="기본 이미지" />
                             <div class="thumb_overlay">
                                 <div class="thumb_topLeft"></div>
                                 <div class="thumb_topRight">

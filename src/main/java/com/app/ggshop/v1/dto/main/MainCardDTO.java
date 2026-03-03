@@ -16,4 +16,6 @@ public class MainCardDTO {
     private String boardFilter;
     private String memberName;
     private String createdDate;
+    private String representativeFilePath;
+    private String representativeFileName;
 }

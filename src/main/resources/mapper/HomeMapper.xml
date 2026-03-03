@@ -7,6 +7,22 @@
             b.id,
             b.title,
             b.content,
+            (
+                select f.file_path
+                from ggshop.tbl_file f
+                join ggshop.tbl_board_file bf on f.id = bf.id
+                where bf.board_id = b.id
+                order by f.id asc
+                limit 1
+            ) as representativeFilePath,
+            (
+                select f.file_name
+                from ggshop.tbl_file f
+                join ggshop.tbl_board_file bf on f.id = bf.id
+                where bf.board_id = b.id
+                order by f.id asc
+                limit 1
+            ) as representativeFileName,
             b.board_filter as boardFilter,
             coalesce(
                 nullif(nullif(m.member_nickname, ''), '닉네임을입력해주세요.'),
