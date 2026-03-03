@@ -15,4 +15,6 @@ public class MainPageDTO {
     private String displayName;
     private int activePostCount;
     private List<MainCardDTO> recentCards;
+    private int notificationCount;
+    private List<MainNotificationDTO> recentNotifications;
 }

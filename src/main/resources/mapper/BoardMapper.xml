@@ -20,9 +20,9 @@
     </insert>
     <select id="findAll" resultType="com.app.ggshop.v1.dto.BoardDTO">
         select
-            id,
-            title,
-            content,
+            b.id,
+            b.title,
+            b.content,
             (
                 select f.file_path
                 from tbl_file f
@@ -40,26 +40,32 @@
                 limit 1
             ) as representativeFileName,
             case
-                when board_filter = '구매' then 'BUY'
-                when board_filter = '판매' then 'SELL'
+                when b.board_filter = '구매' then 'BUY'
+                when b.board_filter = '판매' then 'SELL'
                 else 'ALL'
             end as boardFilter,
             case
-                when board_status = 'active' then 'ACTIVE'
+                when b.board_status = 'active' then 'ACTIVE'
                 else 'INACTIVE'
             end as boardStatus,
-            board_member_id as boardMemberId,
-            created_date as createdDate,
-            updated_date as updatedDate
+            b.board_member_id as boardMemberId,
+            coalesce(
+                nullif(nullif(m.member_nickname, ''), '닉네임을입력해주세요.'),
+                m.member_name,
+                concat('회원#', b.board_member_id)
+            ) as memberNickname,
+            b.created_date as createdDate,
+            b.updated_date as updatedDate
         from ggshop.tbl_board b
-        order by id desc
+        left join ggshop.tbl_member m on m.id = b.board_member_id
+        order by b.id desc
     </select>
 
     <select id="selectAll" resultType="com.app.ggshop.v1.dto.BoardDTO">
         select
-            id,
-            title,
-            content,
+            b.id,
+            b.title,
+            b.content,
             (
                 select f.file_path
                 from tbl_file f
@@ -77,36 +83,42 @@
                 limit 1
             ) as representativeFileName,
             case
-                when board_filter = '구매' then 'BUY'
-                when board_filter = '판매' then 'SELL'
+                when b.board_filter = '구매' then 'BUY'
+                when b.board_filter = '판매' then 'SELL'
                 else 'ALL'
             end as boardFilter,
             case
-                when board_status = 'active' then 'ACTIVE'
+                when b.board_status = 'active' then 'ACTIVE'
                 else 'INACTIVE'
             end as boardStatus,
-            board_member_id as boardMemberId,
-            created_date as createdDate,
-            updated_date as updatedDate
+            b.board_member_id as boardMemberId,
+            coalesce(
+                nullif(nullif(m.member_nickname, ''), '닉네임을입력해주세요.'),
+                m.member_name,
+                concat('회원#', b.board_member_id)
+            ) as memberNickname,
+            b.created_date as createdDate,
+            b.updated_date as updatedDate
         from ggshop.tbl_board b
-        where board_status = 'active'
+        left join ggshop.tbl_member m on m.id = b.board_member_id
+        where b.board_status = 'active'
         <if test="filter != null and filter != ''">
             <choose>
                 <when test="filter == 'buyer'">
-                    and board_filter = '구매'
+                    and b.board_filter = '구매'
                 </when>
                 <when test="filter == 'seller'">
-                    and board_filter = '판매'
+                    and b.board_filter = '판매'
                 </when>
             </choose>
         </if>
         <if test="keyword != null and keyword != ''">
             and (
-                title like concat('%', #{keyword}, '%')
-                or content like concat('%', #{keyword}, '%')
+                b.title like concat('%', #{keyword}, '%')
+                or b.content like concat('%', #{keyword}, '%')
             )
         </if>
-        order by id desc
+        order by b.id desc
         limit #{criteria.offset}, #{criteria.count}
     </select>
 
@@ -135,9 +147,9 @@
 
     <select id="selectById" resultType="com.app.ggshop.v1.dto.BoardDTO">
         select
-            id,
-            title,
-            content,
+            b.id,
+            b.title,
+            b.content,
             (
                 select f.file_path
                 from tbl_file f
@@ -155,19 +167,25 @@
                 limit 1
             ) as representativeFileName,
             case
-                when board_filter = '구매' then 'BUY'
-                when board_filter = '판매' then 'SELL'
+                when b.board_filter = '구매' then 'BUY'
+                when b.board_filter = '판매' then 'SELL'
                 else 'ALL'
             end as boardFilter,
             case
-                when board_status = 'active' then 'ACTIVE'
+                when b.board_status = 'active' then 'ACTIVE'
                 else 'INACTIVE'
             end as boardStatus,
-            board_member_id as boardMemberId,
-            created_date as createdDate,
-            updated_date as updatedDate
+            b.board_member_id as boardMemberId,
+            coalesce(
+                nullif(nullif(m.member_nickname, ''), '닉네임을입력해주세요.'),
+                m.member_name,
+                concat('회원#', b.board_member_id)
+            ) as memberNickname,
+            b.created_date as createdDate,
+            b.updated_date as updatedDate
         from ggshop.tbl_board b
-        where id = #{id}
+        left join ggshop.tbl_member m on m.id = b.board_member_id
+        where b.id = #{id}
     </select>
 
 

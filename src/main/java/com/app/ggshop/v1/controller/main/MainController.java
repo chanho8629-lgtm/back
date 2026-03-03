@@ -16,8 +16,8 @@ public class MainController {
 
     @GetMapping({"/main", "/ev/main"})
     public String showMainPage(HttpSession session, Model model) {
-        MainPageDTO mainPage = mainService.getMainPageData(6);
         MemberDTO member = (MemberDTO) session.getAttribute("member");
+        MainPageDTO mainPage = mainService.getMainPageData(6, member != null ? member.getId() : null);
 
         if (member != null) {
             mainPage.setDisplayName(member.getMemberName());

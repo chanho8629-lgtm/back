@@ -3,376 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/p2p/p2p_4.css" th:href="@{/css/p2p/p2p_4.css}">
     <title>개인간 전력거래 게시글 목록</title>
-    <style>
-        .board-list-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .board-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .board-list-header h2 {
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .write-btn {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .write-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .board-item {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            transition: box-shadow 0.3s ease;
-        }
-
-        .board-item:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .board-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 10px;
-        }
-
-        .board-item-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-
-        .board-item-title:hover {
-            color: #007bff;
-            text-decoration: underline;
-        }
-
-        .board-filter-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        .filter-buyer {
-            background-color: #e7f3ff;
-            color: #0066cc;
-        }
-
-        .filter-seller {
-            background-color: #fff4e6;
-            color: #ff9900;
-        }
-
-        .board-item-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .board-item-content {
-            color: #555;
-            margin-bottom: 10px;
-            line-height: 1.5;
-            max-height: 80px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .board-item-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .tag {
-            display: inline-block;
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .board-item-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #f0f0f0;
-            padding-top: 10px;
-        }
-
-        .board-item-address {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .board-item-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border: 1px solid #ddd;
-            background-color: white;
-            color: #333;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .action-btn:hover {
-            background-color: #f5f5f5;
-        }
-
-        .action-btn.delete {
-            color: #d9534f;
-            border-color: #d9534f;
-        }
-
-        .action-btn.delete:hover {
-            background-color: #fff5f5;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-top: 30px;
-        }
-
-        .pagination button {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            background-color: white;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .pagination button.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-
-        .pagination button:hover:not(.active) {
-            background-color: #f5f5f5;
-        }
-
-        .search-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .search-btn {
-            padding: 10px 20px;
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .search-btn:hover {
-            background-color: #5a6268;
-        }
-
-        .filter-select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-        }
-
-        .message {
-            padding: 12px 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-    </style>
     <link rel="stylesheet" href="/css/p2p/board-list-modern.css" th:href="@{/css/p2p/board-list-modern.css}">
 </head>
 <body>
-<div id="main-app" class="page-wrapper">
-    <!-- Header -->
-    <header class="Header_container__38zbn Header_sticky__3oYwh">
-        <div class="Header_content__QB1FT">
-            <div class="Header_left__2saU5">
-                <button class="StyledComponent_container__1LgDP"
-                        aria-label="뒤로 가기"
-                        type="button"
-                        th:onclick="'location.href=\'' + @{/ev/main} + '\';'">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" class="WithProps_icon__2zN1K" style="height: 24px; width: 24px;">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M16.076 2.576l.848.848L8.35 12l8.575 8.576-.848.848L6.65 12l9.425-9.424z" fill="#495057"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="Header_center__1CCBu" style="max-width: calc(-240px + 100vw);"></div>
-
-            <div class="Header_right__2g4ES">
-                <div class="StyledComponent_container__1LgDP" style="padding: 4px;">
-                    <button class="CountryChangeButton_container__3mgYZ" type="button">
-                        <img alt="KR" class="CountryChangeButton_flag__17556" src="https://flagcdn.com/w80/kr.jpg">
-                    </button>
-                </div>
-                <a class="StyledComponent_container__1LgDP" th:href="@{/ev/main}">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" class="WithProps_icon__2zN1K" style="height: 24px; width: 24px;">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M11 2.4a8.6 8.6 0 105.642 15.09l3.934 3.934.848-.848-3.933-3.934A8.6 8.6 0 0011 2.4zM3.6 11a7.4 7.4 0 1114.8 0 7.4 7.4 0 01-14.8 0z" fill="#495057"></path>
-                    </svg>
-                </a>
-                <a class="StyledComponent_container__1LgDP" th:href="@{/ev/main}" aria-label="홈으로 가기">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" class="WithProps_icon__2zN1K" style="height: 24px; width: 24px;">
-                        <path d="M21.6 7.679l-9.6-6.4-9.6 6.4V21h1.2V8.321l8.4-5.6 8.4 5.6V21h1.2V7.679z" fill="#495057"></path>
-                        <path d="M15.6 21v-8.6H8.4V21h1.2v-7.4h4.8V21h1.2z" fill="#495057"></path>
-                    </svg>
-                </a>
-            </div>
-        </div>
+<div class="board-page">
+    <header class="board-topbar">
+        <a class="topbar-icon" th:href="@{/ev/main}" aria-label="뒤로가기">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M16.076 2.576l.848.848L8.35 12l8.575 8.576-.848.848L6.65 12l9.425-9.424z" fill="currentColor"></path>
+            </svg>
+        </a>
+        <h1>개인간 전력거래</h1>
+        <a class="topbar-icon" th:href="@{/ev/main}" aria-label="홈으로 가기">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
+                <path d="M21.6 7.679l-9.6-6.4-9.6 6.4V21h1.2V8.321l8.4-5.6 8.4 5.6V21h1.2V7.679z" fill="currentColor"></path>
+                <path d="M15.6 21v-8.6H8.4V21h1.2v-7.4h4.8V21h1.2z" fill="currentColor"></path>
+            </svg>
+        </a>
     </header>
 
-    <!-- Main Content -->
-    <main class="board-list-container">
-        <div class="board-list-header">
-            <h2>개인간 전력거래 게시판</h2>
-            <button class="write-btn" onclick="location.href='/p2p/write';">✍️ 글 작성</button>
-        </div>
+    <main class="board-shell">
+        <section class="hero">
+            <div>
+                <h2>실시간 전력거래 게시글을 확인하세요</h2>
+                <p class="hero-desc">와디즈 스타일 카드형 목록으로 최신 거래 글을 한눈에 확인할 수 있습니다.</p>
+            </div>
+            <button class="write-btn" type="button" onclick="location.href='/p2p/write'">글 작성</button>
+        </section>
 
-        <!-- Success/Error Messages -->
         <div th:if="${successMessage}" class="message success" th:text="${successMessage}"></div>
         <div th:if="${errorMessage}" class="message error" th:text="${errorMessage}"></div>
 
-        <!-- Search & Filter -->
-        <div class="search-container">
-            <form method="get" th:action="@{/p2p/list}" style="display: flex; width: 100%; gap: 10px;">
-                <select name="filter" class="filter-select">
-                    <option value="">모든 필터</option>
-                    <option value="buyer" th:selected="${filter == 'buyer'}">구매자</option>
-                    <option value="seller" th:selected="${filter == 'seller'}">판매자</option>
-                </select>
-                <input type="text" name="keyword" class="search-input" placeholder="제목, 내용으로 검색..." th:value="${keyword}">
-                <button type="submit" class="search-btn">🔍 검색</button>
-            </form>
-        </div>
+        <section th:if="${boards != null and boards.size() > 0}" class="card-list">
+            <article th:each="board : ${boards}" class="board-card">
+                <a th:href="@{/p2p/detail/{id}(id=${board.id})}" class="card-link">
+                    <div class="thumb-wrap"
+                         th:if="${board.representativeFilePath != null and board.representativeFileName != null}">
+                        <img th:src="@{/api/files/display(filePath=${board.representativeFilePath}, fileName=${board.representativeFileName})}"
+                             alt="대표 이미지"
+                             class="card-thumb">
+                    </div>
+                    <div class="thumb-empty"
+                         th:if="${board.representativeFilePath == null or board.representativeFileName == null}">
+                        대표 이미지 없음
+                    </div>
 
-        <!-- Board List -->
-        <div th:if="${boards != null && boards.size() > 0}">
-            <div th:each="board : ${boards}" class="board-item">
-                <div th:if="${board.representativeFilePath != null and board.representativeFileName != null}" style="margin-bottom: 12px;">
-                    <img th:src="@{/api/files/display(filePath=${board.representativeFilePath}, fileName=${board.representativeFileName})}"
-                         alt="대표이미지"
-                         style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px; border: 1px solid #dbe5ef;">
-                </div>
-                <div class="board-item-header">
-                    <div>
-                        <div class="board-item-title" th:onclick="'location.href=\'' + @{/p2p/detail/} + ${board.id} + '\';'" style="cursor: pointer;">
-                            <span th:if="${board.boardFilter != null and board.boardFilter.name() == 'BUY'}" class="board-filter-badge filter-buyer">구매</span>
-                            <span th:if="${board.boardFilter != null and board.boardFilter.name() == 'SELL'}" class="board-filter-badge filter-seller">판매</span>
-                            <span th:text="${board.title}"></span>
+                    <div class="card-body">
+                        <div class="card-top">
+                            <span th:if="${board.boardFilter != null and board.boardFilter.name() == 'BUY'}" class="type-badge buy">구매</span>
+                            <span th:if="${board.boardFilter != null and board.boardFilter.name() == 'SELL'}" class="type-badge sell">판매</span>
+                            <span class="card-date" th:text="${board.createdDate}"></span>
                         </div>
+
+                        <h3 class="card-title" th:text="${board.title}"></h3>
+                        <p class="card-content" th:text="${board.summary != null ? board.summary : board.content}"></p>
+                    </div>
+                </a>
+
+                <div class="card-footer">
+                    <span class="writer"
+                          th:text="${board.memberNickname != null and !#strings.isEmpty(board.memberNickname) ? board.memberNickname : '작성자 #' + board.boardMemberId}">
+                        작성자
+                    </span>
+                    <div class="actions" th:if="${currentMemberId != null and currentMemberId == board.boardMemberId}">
+                        <a class="action-btn" th:href="@{/p2p/update(id=${board.id})}">수정</a>
+                        <button type="button" class="action-btn danger" th:onclick="|deleteBoard(${board.id})|">삭제</button>
                     </div>
                 </div>
+            </article>
+        </section>
 
-                <div class="board-item-meta">
-                    <span th:text="'작성자: ' + ${board.boardMemberId}"></span>
-                    <span th:text="'작성일: ' + ${board.createdDate}"></span>
-                </div>
+        <section th:if="${boards == null or boards.isEmpty()}" class="empty-state">
+            <h3>등록된 게시글이 없습니다</h3>
+            <p>첫 게시글을 등록해 보세요.</p>
+            <a th:href="@{/p2p/write}" class="write-link">첫 게시글 작성하기</a>
+        </section>
 
-                <div class="board-item-content" th:text="${board.summary != null ? board.summary : board.content}"></div>
+        <nav class="pagination" th:if="${criteria != null and criteria.realEnd > 0}">
+            <a class="page-btn"
+               th:if="${currentPage > 1}"
+               th:href="@{/p2p/list(page=1)}">«</a>
+            <a class="page-btn"
+               th:if="${currentPage > 1}"
+               th:href="@{/p2p/list(page=${currentPage - 1})}">‹</a>
 
-                <!-- Tags -->
-                <div class="board-item-tags" th:if="${board.boardTags != null && board.boardTags.size() > 0}">
-                    <span class="tag" th:each="tag : ${board.boardTags}" th:text="'#' + ${tag.tagName}"></span>
-                </div>
+            <a th:each="i : ${#numbers.sequence(criteria.startPage, criteria.endPage)}"
+               class="page-btn"
+               th:classappend="${currentPage == i} ? ' active'"
+               th:text="${i}"
+               th:href="@{/p2p/list(page=${i})}"></a>
 
-                <div class="board-item-footer">
-                    <div class="board-item-address">📍 거래 지역 정보 없음</div>
-                    <div class="board-item-actions">
-                        <button class="action-btn" th:onclick="'location.href=\'' + @{/p2p/update} + '?id=' + ${board.id} + '\';'">수정</button>
-                        <button class="action-btn delete" th:onclick="'deleteBoard(' + ${board.id} + ');'">삭제</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination">
-                <button th:if="${currentPage > 1}" onclick="location.href='/p2p/list?page=1'" type="button">«</button>
-                <button th:if="${currentPage > 1}" th:onclick="'location.href=\'/p2p/list?page=' + ${currentPage - 1} + '\';'" type="button">‹</button>
-
-                <span th:if="${criteria != null and criteria.realEnd > 0}">
-                    <button th:each="i : ${#numbers.sequence(criteria.startPage, criteria.endPage)}"
-                            th:text="${i}"
-                            th:class="${currentPage == i} ? 'active' : ''"
-                            th:onclick="'location.href=\'/p2p/list?page=' + ${i} + '\';'"></button>
-                </span>
-
-                <button th:if="${criteria.hasMore}" th:onclick="'location.href=\'/p2p/list?page=' + ${currentPage + 1} + '\';'" type="button">›</button>
-                <button th:if="${criteria.hasMore}" th:onclick="'location.href=\'/p2p/list?page=' + ${criteria.realEnd} + '\';'" type="button">»</button>
-            </div>
-        </div>
-
-        <!-- No Data -->
-        <div th:if="${boards == null || boards.isEmpty()}" class="no-data">
-            <p>작성된 게시글이 없습니다.</p>
-            <p style="font-size: 14px; margin-top: 10px;">
-                <a href="/p2p/write" style="color: #007bff; text-decoration: underline;">첫 번째 글을 작성해보세요!</a>
-            </p>
-        </div>
+            <a class="page-btn"
+               th:if="${criteria.hasMore}"
+               th:href="@{/p2p/list(page=${currentPage + 1})}">›</a>
+            <a class="page-btn"
+               th:if="${criteria.hasMore}"
+               th:href="@{/p2p/list(page=${criteria.realEnd})}">»</a>
+        </nav>
     </main>
 </div>
 
@@ -383,11 +111,10 @@
         }
     }
 
-    // 자동 메시지 닫기 (5초 후)
     document.addEventListener('DOMContentLoaded', function() {
         const messages = document.querySelectorAll('.message');
-        messages.forEach(msg => {
-            setTimeout(() => {
+        messages.forEach(function(msg) {
+            setTimeout(function() {
                 msg.style.display = 'none';
             }, 5000);
         });

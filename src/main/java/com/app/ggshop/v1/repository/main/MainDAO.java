@@ -1,6 +1,7 @@
 package com.app.ggshop.v1.repository.main;
 
 import com.app.ggshop.v1.dto.main.MainCardDTO;
+import com.app.ggshop.v1.dto.main.MainNotificationDTO;
 import com.app.ggshop.v1.mapper.HomeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -18,5 +19,13 @@ public class MainDAO {
 
     public int findActivePostCount() {
         return homeMapper.selectActivePostCount();
+    }
+
+    public int findNotificationCount(Long memberId) {
+        return homeMapper.selectNotificationCount(memberId);
+    }
+
+    public List<MainNotificationDTO> findRecentNotifications(Long memberId, int limit) {
+        return homeMapper.selectRecentNotifications(memberId, limit);
     }
 }

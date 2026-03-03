@@ -98,13 +98,126 @@
             background: linear-gradient(135deg, #0f766e, #0d9488);
             color: #fff;
         }
+
+        .message {
+            margin: 12px 0;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .message.success {
+            border: 1px solid #bbf7d0;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .message.error {
+            border: 1px solid #fecaca;
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .comment-wrap {
+            margin-top: 24px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 18px;
+        }
+
+        .comment-title {
+            margin: 0 0 10px;
+            color: #0f172a;
+            font-size: 18px;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .comment-input {
+            flex: 1;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .comment-submit {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            background: #0f766e;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .comment-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: #f8fafc;
+        }
+
+        .comment-meta {
+            display: flex;
+            gap: 8px;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .comment-content {
+            color: #1e293b;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .comment-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-action-btn {
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .comment-action-btn.danger {
+            border-color: #fecaca;
+            color: #991b1b;
+            background: #fff5f5;
+        }
+
+        .comment-edit-form {
+            margin-top: 10px;
+            display: none;
+            gap: 8px;
+        }
+
+        .comment-edit-form.active {
+            display: flex;
+        }
     </style>
 </head>
 <body>
 <div class="detail-wrap">
     <h1 class="detail-title" th:text="${board.title}">제목</h1>
     <div class="detail-meta">
-        <span th:text="'작성자 ID: ' + ${board.boardMemberId}">작성자</span>
+        <span th:text="${'작성자: ' + (board.memberNickname != null and !#strings.isEmpty(board.memberNickname) ? board.memberNickname : '회원#' + board.boardMemberId)}">작성자</span>
         <span th:text="'작성일: ' + ${board.createdDate}">작성일</span>
         <span th:if="${board.boardFilter != null}" th:text="'구분: ' + ${board.boardFilter.getValue()}">구분</span>
         <span th:if="${board.boardFilter == null}">구분: all</span>
@@ -125,10 +238,89 @@
         <span class="tag-item" th:each="tag : ${board.boardTags}" th:text="'#' + ${tag.tagName}">#태그</span>
     </div>
 
+    <div th:if="${successMessage}" class="message success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="message error" th:text="${errorMessage}"></div>
+
+    <section class="comment-wrap">
+        <h2 class="comment-title" th:text="${'댓글 ' + (comments != null ? comments.size() : 0) + '개'}">댓글</h2>
+
+        <form class="comment-form" method="post" th:action="@{/p2p/comment/write}">
+            <input type="hidden" name="boardId" th:value="${board.id}">
+            <input class="comment-input"
+                   type="text"
+                   name="commentContent"
+                   maxlength="255"
+                   placeholder="댓글을 입력하세요"
+                   required>
+            <button class="comment-submit" type="submit">등록</button>
+        </form>
+
+        <div class="comment-list" th:if="${comments != null and !#lists.isEmpty(comments)}">
+            <article class="comment-item" th:each="comment : ${comments}">
+                <div class="comment-meta">
+                    <strong th:text="${comment.memberNickname}">닉네임</strong>
+                    <span th:text="${comment.createdDate}">작성일</span>
+                </div>
+                <p class="comment-content" th:text="${comment.commentContent}">댓글내용</p>
+
+                <div class="comment-actions"
+                     th:if="${member != null and member.id == comment.commentMemberId}">
+                    <button type="button"
+                            class="comment-action-btn"
+                            th:attr="data-comment-id=${comment.id}"
+                            onclick="toggleEditForm(this)">
+                        수정
+                    </button>
+
+                    <form method="post" th:action="@{/p2p/comment/delete}">
+                        <input type="hidden" name="boardId" th:value="${board.id}">
+                        <input type="hidden" name="commentId" th:value="${comment.id}">
+                        <button type="submit"
+                                class="comment-action-btn danger"
+                                onclick="return confirm('댓글을 삭제하시겠습니까?');">
+                            삭제
+                        </button>
+                    </form>
+                </div>
+
+                <form class="comment-edit-form"
+                      th:id="'comment-edit-' + ${comment.id}"
+                      method="post"
+                      th:action="@{/p2p/comment/update}"
+                      th:if="${member != null and member.id == comment.commentMemberId}">
+                    <input type="hidden" name="boardId" th:value="${board.id}">
+                    <input type="hidden" name="commentId" th:value="${comment.id}">
+                    <input class="comment-input"
+                           type="text"
+                           name="commentContent"
+                           maxlength="255"
+                           th:value="${comment.commentContent}"
+                           required>
+                    <button class="comment-submit" type="submit">저장</button>
+                </form>
+            </article>
+        </div>
+        <div th:if="${comments == null or #lists.isEmpty(comments)}">
+            첫 댓글을 작성해 보세요.
+        </div>
+    </section>
+
     <div class="detail-actions">
         <a class="btn" th:href="@{/p2p/list}">목록</a>
-        <a class="btn primary" th:href="@{/p2p/update(id=${board.id})}">수정</a>
+        <a class="btn primary"
+           th:if="${currentMemberId != null and currentMemberId == board.boardMemberId}"
+           th:href="@{/p2p/update(id=${board.id})}">
+            수정
+        </a>
     </div>
 </div>
+<script>
+    function toggleEditForm(button) {
+        const commentId = button.getAttribute('data-comment-id');
+        const form = document.getElementById('comment-edit-' + commentId);
+        if (!form) return;
+        form.classList.toggle('active');
+    }
+</script>
 </body>
 </html>

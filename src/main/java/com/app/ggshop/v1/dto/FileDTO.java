@@ -23,6 +23,7 @@ public class FileDTO {
                 .fileName(fileName)
                 .fileSize(fileSize)
                 .filePath(filePath)
+                .fileOriginalName(fileOriginalName)
                 .fileStatus(fileStatus)
                 .build();
     }

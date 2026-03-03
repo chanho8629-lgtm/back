@@ -68,7 +68,7 @@
             <div id="AppLayout_Contents" class="AppLayout_contents__N2Q2M">
 
                 <!-- ✅ Form 시작 -->
-                <form th:action="@{/p2p/write}" method="post" enctype="multipart/form-data" id="boardForm">
+                <form action="/p2p/write" th:action="@{/p2p/write}" method="post" enctype="multipart/form-data" id="boardForm">
 
                     <main class="FundingPage_container__NmZmM">
                         <div id="FundingPage_Content" class="FundingPage_box__NmQyY FundingPage_footer__Nzg5N">
@@ -396,19 +396,12 @@
     const simpleFileInput = document.getElementById("simple-image-upload");
     const fileCount = document.getElementById("file-count");
     const filePreviewGrid = document.getElementById("file-preview-grid");
-    const selectedFiles = [];
-
-    const syncFileInput = () => {
-        const dt = new DataTransfer();
-        selectedFiles.forEach((file) => dt.items.add(file));
-        simpleFileInput.files = dt.files;
-        fileCount.textContent = selectedFiles.length;
-    };
-
     const renderFilePreview = () => {
         filePreviewGrid.innerHTML = "";
+        const selectedFiles = Array.from(simpleFileInput.files || []).slice(0, 3);
+        fileCount.textContent = selectedFiles.length;
 
-        selectedFiles.forEach((file, index) => {
+        selectedFiles.forEach((file) => {
             if (!file._previewUrl) {
                 file._previewUrl = URL.createObjectURL(file);
             }
@@ -420,48 +413,25 @@
             img.src = file._previewUrl;
             img.alt = file.name;
 
-            const removeBtn = document.createElement("button");
-            removeBtn.type = "button";
-            removeBtn.className = "file-remove-btn";
-            removeBtn.textContent = "×";
-            removeBtn.addEventListener("click", () => {
-                const removed = selectedFiles.splice(index, 1)[0];
-                if (removed && removed._previewUrl) {
-                    URL.revokeObjectURL(removed._previewUrl);
-                }
-                syncFileInput();
-                renderFilePreview();
-            });
-
             const name = document.createElement("div");
             name.className = "file-preview-name";
             name.textContent = file.name;
 
             item.appendChild(img);
-            item.appendChild(removeBtn);
             item.appendChild(name);
             filePreviewGrid.appendChild(item);
         });
     };
 
     simpleFileInput.addEventListener("change", (e) => {
-        const incomingFiles = Array.from(e.target.files || []);
-
-        for (const file of incomingFiles) {
-            if (!file.type.startsWith("image/")) {
-                continue;
-            }
-            if (selectedFiles.length >= 3) {
-                alert("이미지는 최대 3개까지 선택 가능합니다.");
-                break;
-            }
-            selectedFiles.push(file);
+        const files = Array.from(e.target.files || []);
+        const validImageCount = files.filter((file) => file.type.startsWith("image/")).length;
+        if (validImageCount > 3) {
+            alert("이미지는 최대 3개까지 저장됩니다.");
         }
-
-        syncFileInput();
         renderFilePreview();
 
-        console.log("▶ 선택된 파일:", selectedFiles.length + "개");
+        console.log("▶ 선택된 파일:", (simpleFileInput.files?.length || 0) + "개");
     });
 
     // ===== [2] 제목/요약 글자수 카운터 =====

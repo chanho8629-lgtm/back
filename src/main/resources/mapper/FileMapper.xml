@@ -7,11 +7,13 @@
         insert into tbl_file (
             file_name,
             file_size,
-            file_path
+            file_path,
+            file_original_name
         ) values (
                      #{fileName},
                      #{fileSize},
-                     #{filePath}
+                     #{filePath},
+                     #{fileOriginalName}
                  )
     </insert>
 
@@ -33,6 +35,7 @@
             f.file_name as fileName,
             f.file_size as fileSize,
             f.file_path as filePath,
+            f.file_original_name as fileOriginalName,
             f.file_status as fileStatus
         from tbl_file f
                  inner join tbl_board_file bf on f.id = bf.id
@@ -44,7 +47,8 @@
             id,
             file_name as fileName,
             file_size as fileSize,
-            file_path as filePath
+            file_path as filePath,
+            file_original_name as fileOriginalName
         from tbl_file
         where id = #{id}
     </select>

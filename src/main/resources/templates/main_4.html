@@ -65,8 +65,32 @@
                         <path d="M9.865 1.653c1.545-.338 2.725-.338 4.27 0 3.166.693 5.742 3.414 5.859 6.678.067 1.888.062 3.272.043 5.133-.014 1.348.694 2.716 1.42 4.113a.7.7 0 01-.621 1.022H3.164a.7.7 0 01-.621-1.022l.27-.522c.622-1.216 1.162-2.411 1.15-3.591-.02-1.861-.025-3.245.043-5.133.116-3.264 2.692-5.985 5.859-6.678zm4.014 1.173c-1.377-.301-2.382-.301-3.758 0-2.703.592-4.822 2.902-4.916 5.548-.067 1.86-.062 3.222-.042 5.077.014 1.406-.587 2.772-1.182 3.95h16.037c-.595-1.178-1.196-2.544-1.181-3.95.019-1.855.024-3.217-.042-5.077-.095-2.646-2.213-4.956-4.916-5.548z" fill="#495057"></path>
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M14.367 18.6a2.4 2.4 0 11-4.734 0h-1.21a3.6 3.6 0 107.156 0h-1.212z" fill="#495057"></path>
                     </svg>
-                    <span class="NotificationBadge type-new type-number active">11</span>
+                    <span class="NotificationBadge type-new type-number active"
+                          th:if="${mainPage.notificationCount > 0}"
+                          th:text="${mainPage.notificationCount > 99 ? '99+' : mainPage.notificationCount}">
+                        0
+                    </span>
                 </a>
+                <div id="mainNotificationPanel" class="notification-panel">
+                    <div class="notification-panel-header">
+                        <strong>알림</strong>
+                    </div>
+                    <div class="notification-panel-list"
+                         th:if="${mainPage.recentNotifications != null and !#lists.isEmpty(mainPage.recentNotifications)}">
+                        <a class="notification-item"
+                           th:each="noti : ${mainPage.recentNotifications}"
+                           th:href="@{/p2p/detail/{id}(id=${noti.boardId})}">
+                            <div class="notification-item-title" th:text="${noti.actorName} + '님이 댓글을 남겼어요'">알림 제목</div>
+                            <div class="notification-item-body"
+                                 th:text="${noti.boardTitle + ' - ' + noti.commentContent}">알림 내용</div>
+                            <div class="notification-item-date" th:text="${noti.createdDate}">날짜</div>
+                        </a>
+                    </div>
+                    <div class="notification-empty"
+                         th:if="${mainPage.recentNotifications == null or #lists.isEmpty(mainPage.recentNotifications)}">
+                        새로운 알림이 없습니다.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -152,7 +176,10 @@
             <div class="NavigationTab-name">홈</div>
             <span class="NotificationBadge type-new">N</span>
         </a>
-        <a class="NavigationTab-container" th:href="@{/ev/p2p/list}">
+        <a class="NavigationTab-container"
+           href="/p2p/list"
+           th:href="@{/p2p/list}"
+           onclick="location.href='/p2p/list'">
             <div class="NavigationTab-icon"><i class="fa-solid fa-comments-dollar"></i></div>
             <div class="NavigationTab-name">개인 거래</div>
             <span class="NotificationBadge type-new active">N</span>

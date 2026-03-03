@@ -10,5 +10,5 @@ import lombok.*;
 @Builder
 public class BoardFileVO {
     private Long id;
-    private Long boardid;
+    private Long boardId;
 }

@@ -6,6 +6,7 @@ import com.app.ggshop.v1.dto.BoardTagDTO;
 import com.app.ggshop.v1.dto.MemberDTO;
 import com.app.ggshop.v1.dto.PostWithPagingDTO;
 import com.app.ggshop.v1.service.BoardService;
+import com.app.ggshop.v1.service.CommentService;
 import com.app.ggshop.v1.service.oauth.TagService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class BoardController {
 
     private final BoardService boardService;
+    private final CommentService commentService;
     private final HttpSession session;
     private final TagService tagService;
 
@@ -51,6 +53,8 @@ public class BoardController {
             model.addAttribute("currentPage", page);
             model.addAttribute("filter", filter);
             model.addAttribute("keyword", keyword);
+            MemberDTO member = (MemberDTO) session.getAttribute("member");
+            model.addAttribute("currentMemberId", member != null ? member.getId() : null);
 
             return "p2p/p2p_list";
 
@@ -119,7 +123,7 @@ public class BoardController {
 
             log.info("▶ 게시글 작성 완료 - 제목: {}", boardDTO.getTitle());
             redirectAttributes.addFlashAttribute("successMessage", "게시글이 성공적으로 등록되었습니다.");
-            return "redirect:/p2p/list";
+            return "redirect:/p2p/list?page=1";
 
         } catch (Exception ex) {
             log.error("▶ 게시글 작성 중 오류 발생", ex);
@@ -138,7 +142,18 @@ public class BoardController {
         log.info("▶ 게시글 수정 페이지 이동 - ID: {}", id);
 
         try {
+            MemberDTO member = (MemberDTO) session.getAttribute("member");
+            if (member == null || member.getId() == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "로그인 후 이용 가능합니다.");
+                return "redirect:/login/login";
+            }
+
             BoardDTO board = boardService.detail(id);
+            if (!member.getId().equals(board.getBoardMemberId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "본인이 작성한 게시글만 수정할 수 있습니다.");
+                return "redirect:/p2p/detail/" + id;
+            }
+
             model.addAttribute("board", board);
             return "p2p/p2p_modify_gg";
 
@@ -163,6 +178,18 @@ public class BoardController {
         log.info("▶ 게시글 수정 처리 시작 - ID: {}", boardDTO.getId());
 
         try {
+            MemberDTO member = (MemberDTO) session.getAttribute("member");
+            if (member == null || member.getId() == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "로그인 후 이용 가능합니다.");
+                return "redirect:/login/login";
+            }
+
+            BoardDTO foundBoard = boardService.detail(boardDTO.getId());
+            if (!member.getId().equals(foundBoard.getBoardMemberId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "본인이 작성한 게시글만 수정할 수 있습니다.");
+                return "redirect:/p2p/detail/" + boardDTO.getId();
+            }
+
             // 태그 파싱
             List<BoardTagDTO> tags = new ArrayList<>();
             if (tagsStr != null && !tagsStr.isEmpty()) {
@@ -215,11 +242,85 @@ public class BoardController {
         try {
             BoardDTO board = boardService.detail(id);
             model.addAttribute("board", board);
+            model.addAttribute("comments", commentService.list(id));
+            MemberDTO member = (MemberDTO) session.getAttribute("member");
+            model.addAttribute("member", member);
+            model.addAttribute("currentMemberId", member != null ? member.getId() : null);
             return "p2p/p2p_detail";
         } catch (BoardNotFoundException ex) {
             redirectAttributes.addFlashAttribute("errorMessage", "해당 게시글이 존재하지 않습니다.");
             return "redirect:/p2p/list";
         }
+    }
+
+    @PostMapping("/comment/write")
+    public String writeComment(@RequestParam("boardId") Long boardId,
+                               @RequestParam("commentContent") String commentContent,
+                               RedirectAttributes redirectAttributes) {
+        MemberDTO member = (MemberDTO) session.getAttribute("member");
+        if (member == null || member.getId() == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "로그인 후 댓글 작성이 가능합니다.");
+            return "redirect:/login/login";
+        }
+
+        try {
+            commentService.write(boardId, member.getId(), commentContent);
+            redirectAttributes.addFlashAttribute("successMessage", "댓글이 등록되었습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("▶ 댓글 등록 중 오류 발생", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "댓글 등록 중 오류가 발생했습니다.");
+        }
+
+        return "redirect:/p2p/detail/" + boardId;
+    }
+
+    @PostMapping("/comment/update")
+    public String updateComment(@RequestParam("boardId") Long boardId,
+                                @RequestParam("commentId") Long commentId,
+                                @RequestParam("commentContent") String commentContent,
+                                RedirectAttributes redirectAttributes) {
+        MemberDTO member = (MemberDTO) session.getAttribute("member");
+        if (member == null || member.getId() == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "로그인 후 이용 가능합니다.");
+            return "redirect:/login/login";
+        }
+
+        try {
+            commentService.update(commentId, member.getId(), commentContent);
+            redirectAttributes.addFlashAttribute("successMessage", "댓글이 수정되었습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("▶ 댓글 수정 중 오류 발생", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "댓글 수정 중 오류가 발생했습니다.");
+        }
+
+        return "redirect:/p2p/detail/" + boardId;
+    }
+
+    @PostMapping("/comment/delete")
+    public String deleteComment(@RequestParam("boardId") Long boardId,
+                                @RequestParam("commentId") Long commentId,
+                                RedirectAttributes redirectAttributes) {
+        MemberDTO member = (MemberDTO) session.getAttribute("member");
+        if (member == null || member.getId() == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "로그인 후 이용 가능합니다.");
+            return "redirect:/login/login";
+        }
+
+        try {
+            commentService.delete(commentId, member.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "댓글이 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            log.error("▶ 댓글 삭제 중 오류 발생", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "댓글 삭제 중 오류가 발생했습니다.");
+        }
+
+        return "redirect:/p2p/detail/" + boardId;
     }
 
     @GetMapping("/api/detail/{id}")
@@ -237,6 +338,18 @@ public class BoardController {
         log.info("▶ 게시글 삭제 요청 - ID: {}", id);
 
         try {
+            MemberDTO member = (MemberDTO) session.getAttribute("member");
+            if (member == null || member.getId() == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "로그인 후 이용 가능합니다.");
+                return "redirect:/login/login";
+            }
+
+            BoardDTO board = boardService.detail(id);
+            if (!member.getId().equals(board.getBoardMemberId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "본인이 작성한 게시글만 삭제할 수 있습니다.");
+                return "redirect:/p2p/detail/" + id;
+            }
+
             boardService.delete(id);
             redirectAttributes.addFlashAttribute("successMessage", "게시글이 성공적으로 삭제되었습니다.");
             log.info("▶ 게시글 삭제 완료 - ID: {}", id);

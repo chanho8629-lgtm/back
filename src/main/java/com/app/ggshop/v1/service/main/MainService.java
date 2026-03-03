@@ -1,6 +1,7 @@
 package com.app.ggshop.v1.service.main;
 
 import com.app.ggshop.v1.dto.main.MainCardDTO;
+import com.app.ggshop.v1.dto.main.MainNotificationDTO;
 import com.app.ggshop.v1.dto.main.MainPageDTO;
 import com.app.ggshop.v1.repository.main.MainDAO;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,10 @@ public class MainService {
     private final MainDAO mainDAO;
 
     public MainPageDTO getMainPageData(int cardLimit) {
+        return getMainPageData(cardLimit, null);
+    }
+
+    public MainPageDTO getMainPageData(int cardLimit, Long memberId) {
         MainPageDTO mainPageDTO = new MainPageDTO();
         List<MainCardDTO> cards = mainDAO.findRecentCards(cardLimit);
         int activePostCount = mainDAO.findActivePostCount();
@@ -28,6 +33,15 @@ public class MainService {
 
         mainPageDTO.setRecentCards(cards);
         mainPageDTO.setActivePostCount(activePostCount);
+        if (memberId != null) {
+            int notificationCount = mainDAO.findNotificationCount(memberId);
+            List<MainNotificationDTO> recentNotifications = mainDAO.findRecentNotifications(memberId, 6);
+            mainPageDTO.setNotificationCount(notificationCount);
+            mainPageDTO.setRecentNotifications(recentNotifications);
+        } else {
+            mainPageDTO.setNotificationCount(0);
+            mainPageDTO.setRecentNotifications(new ArrayList<>());
+        }
         return mainPageDTO;
     }
 

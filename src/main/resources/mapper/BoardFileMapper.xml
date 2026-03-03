@@ -4,7 +4,7 @@
 
     <insert id="insert">
         insert into tbl_board_file (id, board_id)
-        values (#{id}, #{boardid})
+        values (#{id}, #{boardId})
     </insert>
 
     <select id="selectAllByBoardId" resultType="com.app.ggshop.v1.dto.BoardFileDTO">

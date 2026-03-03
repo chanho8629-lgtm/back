@@ -8,6 +8,7 @@ import com.app.ggshop.v1.repository.MemberDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -72,6 +73,7 @@ public class MemberService {
     /**
      * 로그인
      */
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public MemberDTO login(String memberEmail, String memberPassword) {
         log.info("▶ 로그인 시도 - 이메일: {}", memberEmail);
 
@@ -109,6 +111,7 @@ public class MemberService {
         memberDTO.setUpdatedDate (memberVO.getUpdatedDate ());
         return memberDTO;
     }
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public boolean existsByEmail(String memberEmail) {
         return memberDAO.existsByEmail(memberEmail);
     }

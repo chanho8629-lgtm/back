@@ -8,7 +8,10 @@
             b.title,
             b.content,
             b.board_filter as boardFilter,
-            m.member_name as memberName,
+            coalesce(
+                nullif(nullif(m.member_nickname, ''), '닉네임을입력해주세요.'),
+                m.member_name
+            ) as memberName,
             date_format(b.created_date, '%Y-%m-%d') as createdDate
         from ggshop.tbl_board b
         join ggshop.tbl_member m on m.id = b.board_member_id
@@ -21,6 +24,33 @@
         select count(*)
         from ggshop.tbl_board
         where board_status = 'active'
+    </select>
+
+    <select id="selectNotificationCount" resultType="int">
+        select count(*)
+        from ggshop.tbl_comment c
+        join ggshop.tbl_board b on b.id = c.comment_board_id
+        where b.board_member_id = #{memberId}
+          and c.comment_member_id != #{memberId}
+          and c.comment_status = 'active'
+    </select>
+
+    <select id="selectRecentNotifications" resultType="com.app.ggshop.v1.dto.main.MainNotificationDTO">
+        select
+            c.id,
+            b.id as boardId,
+            b.title as boardTitle,
+            m.member_name as actorName,
+            c.comment_content as commentContent,
+            date_format(c.created_date, '%Y-%m-%d %H:%i') as createdDate
+        from ggshop.tbl_comment c
+        join ggshop.tbl_board b on b.id = c.comment_board_id
+        join ggshop.tbl_member m on m.id = c.comment_member_id
+        where b.board_member_id = #{memberId}
+          and c.comment_member_id != #{memberId}
+          and c.comment_status = 'active'
+        order by c.created_date desc
+        limit #{limit}
     </select>
 
 </mapper>

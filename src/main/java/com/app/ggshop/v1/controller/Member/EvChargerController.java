@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 
 @Controller
@@ -177,8 +179,7 @@ public class EvChargerController {
 
     @GetMapping("/p2p/list")
     public String p2p() {
-
-        return "/p2p/p2p_list";
+        return "redirect:/p2p/list";
     }
 
 //    @GetMapping("/p2p/write")
@@ -270,6 +271,16 @@ public class EvChargerController {
         return "/login/join_update_6";
     }
 
+    // 하위 호환: /company/loginLv3 GET 접근 시 단계2/3으로 안전하게 연결
+    @GetMapping("/company/loginLv3")
+    public RedirectView loginLv3Compat(@RequestParam(value = "email", required = false) String email) {
+        if (email == null || email.isBlank()) {
+            return new RedirectView("/ev/company/loginLv2");
+        }
+        String encodedEmail = UriUtils.encode(email.trim(), StandardCharsets.UTF_8);
+        return new RedirectView("/ev/company/loginLv3-page?email=" + encodedEmail);
+    }
+
     // loginLv2 POST - 이메일 받아서 Lv3로
 //    @PostMapping("/company/loginLv3")
 //    public String loginLv3(@RequestParam String memberEmail, Model model) {
@@ -304,35 +315,61 @@ public class EvChargerController {
 
     //   POST - Form 제출 받기
     @PostMapping("/company/loginLv3")
-    public RedirectView loginLv3Post(@RequestParam String memberEmail,
+    public RedirectView loginLv3Post(@RequestParam(value = "memberEmail", required = false) String memberEmail,
                                      RedirectAttributes redirectAttributes) {
-        log.info("▶ 이메일 입력: {}", memberEmail);
+        String trimmedEmail = memberEmail == null ? "" : memberEmail.trim();
+        log.info("▶ 이메일 입력: {}", trimmedEmail);
 
-        //  DB에 이메일 존재 여부 확인
-        boolean exists = memberService.existsByEmail(memberEmail);
+        if (trimmedEmail.isEmpty()) {
+            redirectAttributes.addAttribute("error", "emptyEmail");
+            return new RedirectView("/ev/company/loginLv2");
+        }
+
+        boolean exists;
+        try {
+            // DB에 이메일 존재 여부 확인
+            exists = memberService.existsByEmail(trimmedEmail);
+        } catch (Exception ex) {
+            log.error("▶ 이메일 확인 중 예외", ex);
+            if (!isDbConnectionIssue(ex)) {
+                redirectAttributes.addAttribute("error", "invalidCredential");
+                return new RedirectView("/ev/company/loginLv2");
+            }
+            redirectAttributes.addAttribute("error", "dbUnavailable");
+            return new RedirectView("/ev/company/loginLv2");
+        }
 
         if (exists) {
             //   존재하면 → 비밀번호 입력 페이지로
-            redirectAttributes.addAttribute("email", memberEmail);
+            redirectAttributes.addAttribute("email", trimmedEmail);
             return new RedirectView("/ev/company/loginLv3-page");
         } else {
             //  없으면 → 회원가입 페이지로
-            redirectAttributes.addAttribute("email", memberEmail);
+            redirectAttributes.addAttribute("email", trimmedEmail);
             return new RedirectView("/ev/company/signup-page");
         }
     }
 
     //  GET - 비밀번호 입력 페이지
     @GetMapping("/company/loginLv3-page")
-    public String loginLv3Page(@RequestParam String email, Model model) {
+    public String loginLv3Page(@RequestParam(value = "email", required = false) String email,
+                               @RequestParam(value = "error", required = false) String error,
+                               Model model) {
+        if (email == null || email.isBlank()) {
+            return "redirect:/ev/company/loginLv2?error=emptyEmail";
+        }
         log.info("▶ 비밀번호 입력 페이지 - 이메일: {}", email);
         model.addAttribute("memberEmail", email);
+        model.addAttribute("error", error);
         return "/login/join_update_6_password";
     }
 
     //  GET - 회원가입 페이지
     @GetMapping("/company/signup-page")
-    public String signupPage(@RequestParam String email, Model model) {
+    public String signupPage(@RequestParam(value = "email", required = false) String email, Model model) {
+        if (email == null || email.isBlank()) {
+            return "redirect:/ev/company/loginLv2?error=emptyEmail";
+        }
         log.info("▶ 회원가입 페이지 - 이메일: {}", email);
         model.addAttribute("memberEmail", email);
         return "/login/join_second";
@@ -341,15 +378,36 @@ public class EvChargerController {
     // login POST - 실제 로그인 처리
     @PostMapping("/company/login")
     public RedirectView login(
-            @RequestParam String memberEmail,
-            @RequestParam String memberPassword,
+            @RequestParam(required = false) String memberEmail,
+            @RequestParam(required = false) String memberPassword,
             HttpSession session) {
+        String email = memberEmail == null ? "" : memberEmail.trim();
+        String password = memberPassword == null ? "" : memberPassword;
+
+        if (email.isEmpty()) {
+            return new RedirectView("/ev/company/loginLv2?error=emptyEmail");
+        }
+
+        if (password.isEmpty()) {
+            String encodedEmail = UriUtils.encode(email, StandardCharsets.UTF_8);
+            return new RedirectView("/ev/company/loginLv3-page?email=" + encodedEmail + "&error=emptyPassword");
+        }
 
         log.info("============================================");
-        log.info("▶ 로그인 요청 - 이메일: {}", memberEmail);
+        log.info("▶ 로그인 요청 - 이메일: {}", email);
 
         // DB 조회
-        MemberDTO member = memberService.login(memberEmail, memberPassword);
+        MemberDTO member;
+        try {
+            member = memberService.login(email, password);
+        } catch (Exception ex) {
+            log.error("▶ 로그인 중 예외", ex);
+            String encodedEmail = UriUtils.encode(email, StandardCharsets.UTF_8);
+            if (!isDbConnectionIssue(ex)) {
+                return new RedirectView("/ev/company/loginLv3-page?email=" + encodedEmail + "&error=invalidCredential");
+            }
+            return new RedirectView("/ev/company/loginLv3-page?email=" + encodedEmail + "&error=dbUnavailable");
+        }
 
         if (member != null) {
             // 로그인 성공
@@ -360,10 +418,11 @@ public class EvChargerController {
             return new RedirectView("/ev/main");
         } else {
             // 로그인 실패
-            log.warn("▶ 로그인 실패 - 이메일: {}", memberEmail);
+            log.warn("▶ 로그인 실패 - 이메일: {}", email);
             log.info("============================================");
 
-            return new RedirectView("/ev/company/login?error=true");
+            String encodedEmail = UriUtils.encode(email, StandardCharsets.UTF_8);
+            return new RedirectView("/ev/company/loginLv3-page?email=" + encodedEmail + "&error=invalidCredential");
         }
     }
 
@@ -379,5 +438,21 @@ public class EvChargerController {
     public String customerCreate() {
         return "/company-admin/vtog-transaction-create";
 
+    }
+
+    private boolean isDbConnectionIssue(Throwable throwable) {
+        Throwable current = throwable;
+        while (current != null) {
+            String simpleName = current.getClass().getSimpleName();
+            if ("CannotCreateTransactionException".equals(simpleName)
+                    || "CommunicationsException".equals(simpleName)
+                    || "CJCommunicationsException".equals(simpleName)
+                    || "SQLTransientConnectionException".equals(simpleName)
+                    || "JDBCConnectionException".equals(simpleName)) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }

@@ -11,16 +11,21 @@ import com.app.ggshop.v1.mapper.BoardTagMapper;
 import com.app.ggshop.v1.mapper.FileMapper;
 import com.app.ggshop.v1.repository.board.BoardDAO;
 import com.app.ggshop.v1.repository.board.BoardFileDAO;
+import com.app.ggshop.v1.repository.board.CommentDAO;
 import com.app.ggshop.v1.repository.board.FileDAO;
 import com.app.ggshop.v1.repository.board.TagDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,8 +45,10 @@ public class BoardService {
     private final TagDAO tagDAO;
     private final FileDAO fileDAO;
     private final BoardFileDAO boardFileDAO;
+    private final CommentDAO commentDAO;
 
-    private static final String ROOT_PATH = "C:/file/";
+    @Value("${app.file.root-path:C:/Users/chanh/uploads}")
+    private String rootPath;
     private static final int MAX_FILES = 3;
     private static final int MAX_TAGS = 10;
 
@@ -92,6 +99,11 @@ public class BoardService {
             try {
                 UUID uuid = UUID.randomUUID();
                 String fileName = uuid.toString() + "_" + multipartFile.getOriginalFilename();
+                Path targetDir = Paths.get(rootPath, todayPath);
+                Files.createDirectories(targetDir);
+
+                // 물리 파일 저장을 먼저 수행해 실패 시 DB 연동을 막는다.
+                multipartFile.transferTo(targetDir.resolve(fileName));
 
                 FileDTO fileDTO = new FileDTO();
                 fileDTO.setFilePath(todayPath);
@@ -107,13 +119,6 @@ public class BoardService {
                 boardFileDTO.setId(fileDTO.getId());
                 boardFileDTO.setBoardId(boardId);
                 boardFileDAO.save(boardFileDTO.toBoardFileVO());
-
-                // 물리적 파일 저장
-                File directory = new File(ROOT_PATH + todayPath);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-                multipartFile.transferTo(new File(ROOT_PATH + todayPath, fileName));
 
                 log.info("▶ 파일 저장 완료: ID={}, 파일명={}, 크기={}",
                         fileDTO.getId(), fileName, multipartFile.getSize());
@@ -256,6 +261,11 @@ public class BoardService {
             try {
                 UUID uuid = UUID.randomUUID();
                 String fileName = uuid.toString() + "_" + multipartFile.getOriginalFilename();
+                Path targetDir = Paths.get(rootPath, todayPath);
+                Files.createDirectories(targetDir);
+
+                // 물리 파일 저장을 먼저 수행해 실패 시 DB 연동을 막는다.
+                multipartFile.transferTo(targetDir.resolve(fileName));
 
                 FileDTO fileDTO = new FileDTO();
                 fileDTO.setFilePath(todayPath);
@@ -269,13 +279,6 @@ public class BoardService {
                 boardFileDTO.setBoardId(boardId);
                 boardFileDTO.setId(fileDTO.getId());
                 boardFileDAO.save(boardFileDTO.toBoardFileVO());
-
-                File directory = new File(ROOT_PATH + todayPath);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-
-                multipartFile.transferTo(new File(ROOT_PATH + todayPath, fileName));
 
                 log.info("▶ 파일 추가 저장: ID={}, 파일명={}", fileDTO.getId(), fileName);
 
@@ -299,7 +302,7 @@ public class BoardService {
             }
 
             // 물리적 파일 삭제
-            File file = new File(ROOT_PATH + fileVO.get().getFilePath(), fileVO.get().getFileName());
+            File file = Paths.get(rootPath, fileVO.get().getFilePath(), fileVO.get().getFileName()).toFile();
             if (file.exists()) {
                 if (file.delete()) {
                     log.info("▶ 물리적 파일 삭제: {}", file.getAbsolutePath());
@@ -323,10 +326,13 @@ public class BoardService {
         // 1. 태그 삭제
         tagDAO.deleteByBoardId(id);
 
-        // 2. 파일 삭제
+        // 2. 댓글 삭제
+        commentDAO.deleteByBoardId(id);
+
+        // 3. 파일 삭제
         List<BoardFileDTO> boardFiles = boardFileDAO.findAllByBoardId(id);
         boardFiles.forEach(boardFileDTO -> {
-            File file = new File(ROOT_PATH + boardFileDTO.getFilePath(), boardFileDTO.getFileName());
+            File file = Paths.get(rootPath, boardFileDTO.getFilePath(), boardFileDTO.getFileName()).toFile();
             if (file.exists()) {
                 if (file.delete()) {
                     log.info("▶ 물리적 파일 삭제: {}", file.getAbsolutePath());
@@ -338,7 +344,7 @@ public class BoardService {
             fileDAO.delete(fileId);
         });
 
-        // 3. 게시글 삭제
+        // 4. 게시글 삭제
         boardDAO.delete(id);
 
         log.info("▶ 게시글 삭제 완료: ID={}", id);

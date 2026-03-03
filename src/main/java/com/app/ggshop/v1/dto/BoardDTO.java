@@ -23,6 +23,7 @@ public class BoardDTO {
     private String createdDate;
     private String updatedDate;
     private Long boardMemberId;
+    private String memberNickname;
     private String representativeFilePath;
     private String representativeFileName;
 

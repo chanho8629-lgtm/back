@@ -32,7 +32,7 @@ public class BoardFileDTO {
     public BoardFileVO toBoardFileVO(){
         return BoardFileVO.builder()
                 .id(id)
-                .boardid(boardId)
+                .boardId(boardId)
                 .build();
     }
 }
