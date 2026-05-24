@@ -385,4 +385,4 @@ if (!member.getId().equals(foundBoard.getBoardMemberId())) {
 ---
 
 **작성자:** 정찬호 &nbsp;&nbsp;&nbsp;&nbsp; **TEAM:** GG#  
-**기간:** 2026.02 ~ 2026.05
+**기간:** 2026.01 ~ 2026.02
