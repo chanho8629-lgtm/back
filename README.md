@@ -86,6 +86,46 @@ GG#은 전기차 보유자와 충전이 필요한 사용자를 연결하는 P2P 
 
 ---
 
+## 📁 프로젝트 구조
+
+```text
+src/main/java/com/app/ggshop/v1
+├── controller     # 화면 이동, REST/AJAX 요청 처리
+├── service        # 비즈니스 로직
+├── repository     # DAO 계층
+├── mapper         # MyBatis Mapper 인터페이스
+├── domain         # VO
+├── dto            # 화면/API 데이터 전달 객체
+├── common         # enum, exception, pagination
+└── mybatis        # type handler, converter
+
+src/main/resources
+├── mapper         # MyBatis XML
+├── templates      # Thymeleaf 화면
+├── static         # 정적 리소스
+└── sql            # 초기 SQL 및 테이블 스크립트
+```
+
+---
+
+## ▶ 실행 방법
+
+```bash
+./gradlew bootRun
+```
+
+```powershell
+.\gradlew.bat bootRun
+```
+
+- 기본 실행 포트: `10000`
+- 접속 주소: `http://localhost:10000`
+- DB: MySQL
+- 주요 설정 파일: `src/main/resources/application.yaml`
+- 로컬 실행 전 DB 이름, 계정, 파일 업로드 경로는 개인 환경에 맞게 수정해야 합니다.
+
+---
+
 ## ✅ 주요 기능
 
 ### 🔐 1. 회원 및 인증
@@ -132,6 +172,13 @@ GG#은 전기차 보유자와 충전이 필요한 사용자를 연결하는 P2P 
 - 프로필 이미지 업로드
 - 공통 파일 업로드 처리
 - 예외 상황별 에러 메시지 처리
+
+### 🏢 6. 기업 관리자 및 직원 관리
+
+- 기업 관리자 화면 구성
+- 직원 등록, 목록, 상세, 수정, 삭제
+- 이름/이메일 기반 검색
+- 회원, 충전소, 거래 내역 관리 화면 연동
 
 ---
 
@@ -189,6 +236,13 @@ GG#은 전기차 보유자와 충전이 필요한 사용자를 연결하는 P2P 
 - 태그 등록, 삭제 처리
 - 댓글 작성, 수정, 삭제 구현
 - 구매/판매 필터, 키워드 검색, 페이징 구현
+
+### 🏢 기업 관리자 및 직원 관리
+
+- 기업 관리자 화면 데이터 연결
+- 직원 등록, 목록, 상세, 수정, 삭제 구현
+- 이름/이메일 기반 검색 및 페이징 처리
+- 회원, 충전소, V2G 거래 관리 화면 흐름 정리
 
 ### 🧩 공통
 
@@ -307,6 +361,7 @@ if (!member.getId().equals(foundBoard.getBoardMemberId())) {
 - EV 충전기 CRUD 및 UID 중복 확인 테스트
 - V2G 거래 등록, 조회, 탭 필터 테스트
 - P2P 게시글 CRUD 및 권한 검증 테스트
+- 기업 직원 CRUD 및 검색 테스트
 - 파일 업로드, 이미지 리사이징 테스트
 - 태그, 댓글, 검색, 필터, 페이징 테스트
 
